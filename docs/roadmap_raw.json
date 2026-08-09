@@ -1,0 +1,172 @@
+{
+  "summary": "Research + adversarially verify + prioritize improvements to push our offline ARC-AGI-2 solver from ~24% toward 30%+",
+  "agentCount": 40,
+  "logs": [
+    "[verify:Force a diverse second p] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:Output-shape prediction ] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:Learned selection/verifi] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:Sampling+DFS hybrid: add] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:Calibrate the selection ] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:Self-induction: re-purpo] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:Increase inference-time ] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:Two-model self-ensemble ] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[find:synthetic_data] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:Lower the turbo_dfs prob] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:Continued-FT (LoRA) of t] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:Add an inductive (progra] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:1.7B-vs-4B base study: t] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:(Evaluate-but-likely-REJ] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:Cheap diversity ensemble] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:Lower the DFS probabilit] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:Increase inference-time ] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:Per-task time-budget tun] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:Hierarchical / cell-wise] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:Multi-seed TTFT ensembli] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:Add a second model famil] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:Tune TTFT compute (steps] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "[verify:Lower the turbo_dfs prob] failed: API Error: Server is temporarily limiting requests (not your usage limit) · Rate limited",
+    "research done: 33 ideas evaluated, 6 kept"
+  ],
+  "result": {
+    "kept_count": 6,
+    "total_ideas": 33,
+    "roadmap": {
+      "summary": "Grounded in the code (solver_local.py, selection.py, arc_loader.py, vote.py) and the 2 cached tasks in outputs/repro_decoded.pkl. Three load-bearing facts reshape priorities: (1) every cached candidate stores exactly 8 score_aug values, so raising m (8->16/24) is a model RECOMPUTE in calc_scores (solver_local.py L285-287), NOT a free scorer sweep; only aggregation/count-weight/geometric-vs-sum variants over the existing 8 values are truly free. (2) permute_rnd_all_ (arc_loader.py L36-38) already uses full 10-color perms with no background fix, so fix-background is a cheap, unproven test. (3) The 2 cached tasks show the real failure is coverage/weak-consensus, not mis-ranking: 135a2760 was SOLVED with a 10-vote consensus, while 0934a4d8 (30x30->9x4, non-shape-preserving) FAILED with scattered max-2-vote candidates. Budget is binding: L4x4 gives ~720s/task (43200s/60), but the 5090 already averages ~180s/task and L4 is ~2-3x slower, so realized L4x4 is ~360-540s/task — only ~1.3-2x headroom; higher m and a second 8B model are real budget trades. ROI ordering front-loads zero-recompute selection sweeps + cheap variance reduction, defers induction, merges the two tiny-DSL ideas into one guarded soft-tiebreaker. Realistic total: ~24% -> ~26-28% pass@2 high-confidence; 30% plausible only if induction lands net-new coverage (~30% chance of ~0) AND selection gains stack without saturating. Honest landing: ~27% +/- 2pp.",
+      "ranked": [
+        {
+          "rank": 1,
+          "idea": "FREE selection sweep on the existing 8-aug cache (aggregation sum vs geometric/arithmetic mean, count-weight 0/1/2, fix-background) + oracle-in-set measurement. No recompute, no retrain.",
+          "why": "Only true effort-S cheap scorer-only lever. Cache stores exactly 8 score_aug/candidate so aggregation + count-weight sweep in CPU seconds. getter_kgmon (count - mean(score_aug)) vs getter_full_probmul_3 differ only in aggregation and were never compared on ARC-AGI-2. Also yields the gating number: oracle-in-set vs achieved pass@2. Cache shows headroom small but real (135a2760 had a clean 10-vote correct consensus; 0934a4d8 had no correct candidate at all). Measure recoverable mis-ranking before spending GPU.",
+          "expected_delta_pp": "+0.3 to +1.0 pp (point ~+0.5) plus a free roadmap-gating measurement",
+          "effort": "S (hours, CPU-only)",
+          "first_experiment": "Decode/cache ~60-80 eval tasks once (hours on 5090; pkl has only 2). Then pure-Python over the cache: (a) oracle = any candidate==gold -> max pass@2; (b) sweep {count-weight 0/1/2} x {sum, arith-mean, geom-mean of the 8 score_aug} via ArcDecoder.run_selection_algo; (c) fix-background via a permute_rnd_keep0_ (np.random.permutation(9)+1) which changes the aug set so needs a small ~30-task re-decode, not pure replay. Report oracle vs best achieved.",
+          "depends_on": "Needs a ~60-80 task candidate cache (one decode pass on the 5090). Rest is CPU."
+        },
+        {
+          "rank": 2,
+          "idea": "Raise re-scoring m from 8 toward 16 (recompute calc_scores), BUDGET-GATED and only if rank-1 oracle gap proves recoverable in-set headroom.",
+          "why": "Product-of-Experts: aggregating likelihood over more augmented views is the dominant selection signal; NLL variance ~1/m so 8->16 halves noise. NOT free on our cache: each candidate stores only 8 score_aug, so extra views require new forward passes in calc_scores (L285-287), scaling ~linearly with m against the tight L4x4 budget. Use the SAME fixed aug set per candidate for comparability.",
+          "expected_delta_pp": "+0.3 to +1.0 pp (point ~+0.5), conditional on a real in-set mis-ranking gap; near 0 if coverage-bound",
+          "effort": "S-M (small code; cost is GPU time + budget risk)",
+          "first_experiment": "On the same 60-task cache request 16 score_aug (extend the calc_scores chunk-by-4 split at L285-286). Compare pass@2 m=8 vs 16 AND added s/task. Adopt only if delta >= +0.5pp AND total stays under ~600s/task on a 5090.",
+          "depends_on": "Rank 1 (oracle gap must justify it). Re-run the rank-1 winning getter at m=16."
+        },
+        {
+          "rank": 3,
+          "idea": "Per-task LoRA EMA / last-K checkpoint averaging during TTFT; decode with the averaged adapter.",
+          "why": "TTFT is a single short cosine-to-zero pass over ~aug_n examples (L194-227), high variance. EMA-of-LoRA-weights is a near-free variance reducer (one LoRA-sized copy/step, zero extra decode forwards). Honest discount: cited TRM +4.3pp/24.1% is conflated (real TRM ARC-AGI-2 ~7.8%, averages a 7M net not a 4B LoRA), and our cosine-to-zero already settles low, shrinking EMA benefit.",
+          "expected_delta_pp": "0 to +0.7 pp (point ~+0.3); noisy, needs ~80-100 tasks",
+          "effort": "M (small code, tune decay + a real eval run)",
+          "first_experiment": "In train_task() keep a shadow get_peft_model_state_dict; after each opt.step do ema=decay*ema+(1-decay)*params for decay in {0.9,0.95,0.99}, plus mean-of-last-4; load via set_peft_model_state_dict before solve_task. Compare pass@2 on >=80 tasks. Watch over-smoothing (too-high decay underfits, can HURT).",
+          "depends_on": "Mechanically independent; evaluate AFTER fixing the rank-1 scorer so deltas use the better selector."
+        },
+        {
+          "rank": 4,
+          "idea": "LoRA rank/alpha hygiene sweep (r {128,256} x alpha {16,32}, rslora on, KEEP embed_tokens+lm_head); reinvest saved time into more TTFT augmentations.",
+          "why": "Keeping embed_tokens+lm_head is non-negotiable (only place the 16-token grid vocab is learned, L180-183), so this is a rank/speed sweep not a target change. r=256 over a short schedule may be slow/under-trained (ARChitects used r=32 at test time). Prize is iso-accuracy at lower wall time, buying headroom for rank-2 higher m or more steps. Mostly hygiene.",
+          "expected_delta_pp": "0 to +0.5 pp direct (point ~+0.2); main value is freeing ~10-30% per-task time",
+          "effort": "S",
+          "first_experiment": "On 40 tasks sweep lora_r {128,256} x lora_alpha {16,32} (use_rslora=True, embed/lm_head kept). Record pass@2 AND s/task. If r=128 is iso-accuracy and faster, adopt and feed saved time into rank-2 higher m or +aug_n. Edit LoraConfig in LocalSolver.__init__.",
+          "depends_on": "Independent; do alongside rank 3. Time savings subsidize rank 2's budget gate."
+        },
+        {
+          "rank": 5,
+          "idea": "Single guarded symbolic verifier as a SOFT tiebreaker + gated candidate injection (merge the two tiny-DSL ideas into one).",
+          "why": "Both DSL ideas share one synthesizer and should be one item. ~30-primitive numpy DSL (flip/rot/transpose/colormap/tiling/crop-bbox/gravity/symmetrize/CC-recolor), depth<=2 brute force, keep only all-train-consistent programs, then (a) soft-bonus matching neural candidates and (b) inject absent test predictions. Realism: ARC-AGI-2 built to defeat brute-force DSL (icecuber ~1.6%; 32% of eval not shape-preserving — our 0934a4d8 is 30x30->9x4), coverage tiny. 'No downside by construction' is FALSE: a shortcut fitting 2-3 demos can map the test wrong and a hard +1000 would DISPLACE a correct neural top-1; MUST be guarded (require >=3 train pairs, never override neural #1).",
+          "expected_delta_pp": "0 to +0.5 pp (point ~+0.3), realistically near-zero net after displacement risk",
+          "effort": "S (CPU-only synthesizer) with a correctness/sandbox burden",
+          "first_experiment": "Write src/arc/verify.py: ~30 numpy primitives, depth<=2 synthesize(train_pairs)->all-train-consistent programs (~50k compositions, <1s/task CPU). On the 60-120 task cache measure: (i) tasks with any consistent program, (ii) test==gold rate, (iii) net-new solves vs neural, (iv) simulate a SOFT bonus (>=3 train pairs, can only break ties/promote into top-2, never demote neural #1) and recompute pass@2. Ship only if net-new >= 3/120 OR strictly non-negative.",
+          "depends_on": "Needs rank-1 cache. Tune the tiebreaker against the rank-1 winning scorer so it only fires at low neural confidence."
+        },
+        {
+          "rank": 6,
+          "idea": "BIG BET: offline BARC induction-8B (barc0/Llama-3.1-ARC-Potpourri-Induction-8B) -> sample programs -> execute/verify on train pairs -> inject verified test grids into the vote, GATED to low-confidence transductive tasks.",
+          "why": "Only substantive path to NET-NEW coverage (the dominant ARC-AGI-2 failure: correct grid absent, e.g. 0934a4d8). Induction+transduction is the ARC-AGI-1-winning recipe and the 8B is free/offline. Ranked last because: distribution shift is the killer (BARC trains on ARC-AGI-1-like synth that ARC-AGI-2 defeats -> small, partly-overlapping incremental coverage; ~30% chance of ~0); cited 38-57% are ARC-AGI-1 and don't transfer; adds a second 8B model + a hardened code-execution sandbox inside Kaggle (new failure surface) and real 12h-budget pressure given ~360-540s/task on L4x4. Gate to low-confidence (no clear vote consensus) tasks to bound cost.",
+          "expected_delta_pp": "+0.5 to +1.5 pp (center ~+1.0) IF it lands; ~30% chance of ~0 net-new on ARC-AGI-2",
+          "effort": "L (second model + sandbox + budget engineering)",
+          "first_experiment": "Download the model. On 30 eval tasks: sample 128 programs/task (vLLM temp~0.8), execute each on train pairs in a 2s-timeout subprocess sandbox, keep all-train-consistent, run on test input. Measure ONLY net-new tasks solved vs the transductive pipeline (complementarity), plus s/task and programs/task vs the 12h L4x4 budget. One 5090 suffices for dev. Integrate only if net-new >= 2-3/30 AND gated cost is affordable.",
+          "depends_on": "Independent of selection work but run LAST; only item justifying cloud GPU rental, and only after ranks 1-5 quantify how much of the gap is selection (cheap) vs coverage (this)."
+        }
+      ],
+      "quick_wins": [
+        "Rank 1 - FREE cache-replay selection sweep (aggregation sum/mean/geometric, count-weight 0/1/2) + oracle-in-set measurement. CPU-only on outputs/repro_decoded.pkl once it has ~60-80 tasks. Highest-ROI; gates the rest. Edit src/nvarc/selection.py getters; measure via ArcDecoder.benchmark_selection_algos.",
+        "fix-background color perms - add permute_rnd_keep0_ to src/nvarc/arc_loader.py (np.random.permutation(9)+1, leave 0 fixed); NVARC uses full 10-color permute_rnd_all_ (L36-38), so unproven; worth a ~30-task A/B (needs a small re-decode, not pure replay).",
+        "Rank 3 - LoRA EMA: shadow-weight EMA in solver_local.py train_task() (one LoRA-sized copy/step, decay {0.9,0.95,0.99} or last-4), load via set_peft_model_state_dict before decode. Near-free, composes with everything.",
+        "Rank 4 - LoRA rank/alpha hygiene sweep (r{128,256} x alpha{16,32}, rslora on, KEEP embed_tokens+lm_head). Win is iso-accuracy at lower s/task to free budget for higher m. Edit LoraConfig in LocalSolver.__init__.",
+        "Decode a proper 60-120 task candidate cache on the 5090 first (current repro_decoded.pkl has only 2 tasks) - prerequisite for every cache-based experiment above."
+      ],
+      "big_bets": [
+        "Rank 6 - Offline BARC induction-8B as a parallel program-synthesis branch: sample 128 programs/task (vLLM), execute-and-verify on train pairs in a sandboxed subprocess (2s timeout, import restriction), inject verified test grids into the augment-and-vote pool, GATED to low-confidence transductive tasks to bound L4x4 cost. Only substantive path to NET-NEW coverage (correct grid absent, e.g. 0934a4d8), but distribution shift (BARC trains on ARC-AGI-1-like synth ARC-AGI-2 defeats) means ~30% chance of ~0 net gain. Highest engineering effort (second 8B + hardened sandbox + 12h-budget management); only item that might justify modest cloud GPU rental. Run LAST.",
+        "Rank 2 (conditional escalation) - raise re-scoring m from 8 to 16/24 via calc_scores recompute (solver_local.py L285-287). Not a quick win: cache stores only 8 score_aug, so it costs GPU forward passes scaling ~linearly with m against a tight ~720s/task L4x4 ceiling. Promote ONLY if rank-1's oracle measurement shows the correct answer is frequently in-set but mis-ranked; otherwise coverage-bound and near-zero."
+      ]
+    },
+    "kept": [
+      {
+        "vector": "ttft",
+        "name": "Close the pass@128->pass@2 selection gap: stronger augmentation re-scoring (larger m, fix-background color perms, product-of-experts)",
+        "mechanism": "NVARC reports pass@128 ~30% but only ~18-24% lands in pass@2 — the bottleneck is SELECTION, not generation. The vote is score(s)=count(s)+(1/m)*sum_j logP_j(s) with m=8. ARChitects' Product-of-Experts paper shows aggregating likelihood across more augmented 'views' (geometric mean of log-probs) is the dominant selection signal. Raising m (8->16/24), using the SAME fixed augmentation set per candidate (NVARC's own tweak for comparability), and ensuring color perms keep background fixed (NVARC/TRM both fix color-0) tightens the estimator and reorders the top-2 toward the correct answer that already exists in the DFS set.",
+        "adjusted_delta_pp": "+0.5 to +1.5 pp (point estimate ~+1.0)",
+        "effort": "S",
+        "priority": 42,
+        "needs_base_resft": false,
+        "first_experiment": "Freeze TTFT+DFS candidate sets for ~60 eval tasks (cache them). Then sweep the scorer only (cheap, no retrain): m in {8,16,24}, fix_background True/False, count-weight in {0,1,2}, and geometric-mean vs sum aggregation. Report oracle pass@k (is correct answer in candidate set?) vs achieved pass@2 to quantify the recoverable gap.",
+        "risks": "1) The headline knob (raise m 8->16/24) is NOT a free scorer sweep on our cache: inspected outputs/repro_decoded.pkl and every candidate stores exactly 8 score_aug values. Extra augmentation NLLs must be recomputed by re-running forward passes through the TTFT'd model in calc_scores (solver_local.py L285-287), which competes for the 12h/240-task L4x4 budget and roughly scales re-scoring cost linearly with m. The proposal's 'effort S / cheap scorer-only sweep' is only true for aggregation variants (sum/mean, count-weight, geometric/arithmetic) over the existing 8 values; the m-increase is a model recompute. 2) Bottleneck is overstated for ARC-AGI-2: pure reorder can only recover answers already in the DFS set; on ARC-AGI-2 the dominant failure is the correct grid being ABSENT (generation coverage), not mis-ranked. Cited 30%->24% selection gap is ARC-AGI-1/NVARC-era; ARC-AGI-2 oracle-in-set headroom is typically only 1-3pp. 3) No measured local gap: the only repro run (outputs/repro_run30.log) completed just 3/30 tasks, so the claim rests entirely on external NVARC numbers. 4) Diminishing returns: NLL variance ~1/m, so 8->24 only thirds variance for sublinear reorder benefit. 5) fix_background contradicts evidence somewhat -- NVARC won 24% with full 10-color perms in scoring (arc_loader.permute_rnd_all_), so fixing color-0 is unproven, not a known win."
+      },
+      {
+        "vector": "ttft",
+        "name": "Per-task adapter EMA / checkpoint-averaging across the TTFT trajectory",
+        "mechanism": "Per-task TTFT on ~16-64 noisy augmentation steps is high-variance; the final LoRA can over/under-shoot. Maintain an exponential moving average of LoRA weights during training (or average the last K checkpoints) and decode with the EMA adapter. The TRM ARC-AGI-2 paper explicitly uses EMA during test-time adaptation as part of the recipe that reaches 24.1% (+4.3pp over no-TTA), and EMA-of-weights is a well-established variance-reduction / generalization win. This denoises the adapter without extra forward passes at decode.",
+        "adjusted_delta_pp": "0 to +1 pp (best guess ~+0.5pp)",
+        "effort": "M",
+        "priority": 42,
+        "needs_base_resft": false,
+        "first_experiment": "In train_task(), keep a shadow copy of the LoRA params; after each opt.step do ema = decay*ema + (1-decay)*params (decay in {0.9,0.95,0.99}). Before eval, load ema into the adapter. Compare pass@2 vs no-EMA on 40 tasks; also try simple 'average last 4 checkpoints'. Cost is ~one extra LoRA-sized tensor copy per step.",
+        "risks": "(1) CITED EVIDENCE IS INFLATED. The \"TRM reaches 24.1% on ARC-AGI-2 (+4.3pp from EMA-TTA)\" claim does not match reality: the documented TRM (Tiny Recursive Model, Jolicoeur-Martineau 2025) ARC-AGI-2 result is ~7.8%, not 24.1%. The 24% figure is NVARC/winner territory, a different system. So the headline \"+4.3pp from EMA\" attribution is conflated and is NOT a clean transfer signal for our Qwen3-4B LoRA-TTFT pipeline (TRM EMA averages a 7M-param recursive net, not a per-task LoRA over a 4B LLM). I cut the delta accordingly. (2) ARCHITECTURAL MISMATCH WITH OUR ACTUAL LOOP: the validated path (LocalSolver.train_task in src/nvarc/solver_local.py, lines 194-227) runs a SINGLE short pass over ~aug_n*n_demos examples under a get_cosine_schedule_with_warmup that decays LR to ~0. EMA gives its biggest win over long, high/constant-LR noisy training; over a short cosine-to-zero run the final checkpoint is already a low-LR-settled point, so EMA's marginal benefit is much smaller than the literature's headline. (3) BRITTLE METRIC: pass@2 is exact-grid-match + augmentation-NLL voting; small NLL denoising from EMA may not flip wrong->right tasks, making the gain noisy/near-zero and hard to measure on 40 tasks (need ~100+ for signal). (4) DECAY/K is a new hyperparameter to tune (0.9/0.95/0.99 or last-K avg) per the short trajectory; wrong decay (too high) can under-fit the adapter and HURT. (5) Risk of double-counting: this is proposed to \"stack cleanly with idea 1\" but if idea 1 already changes the trajectory length/LR, EMA's effect changes too."
+      },
+      {
+        "vector": "neuro_symbolic",
+        "name": "Bolt-on OFFLINE induction head (public BARC induction-8B) → programs → execution-verify → ensemble into the vote",
+        "mechanism": "Run the NVARC transductive pipeline as today, AND in parallel run a public, offline induction model that emits PYTHON programs solving the task by example. Filter generated programs by execution on train pairs (keep only those reproducing all train outputs), execute survivors on the test input, and feed the resulting grids into the SAME augment-and-vote pool with the verification bonus. This is the literal 'combine induction + transduction' recipe that wins ARC-AGI-1, ported offline. The induction model (barc0/Llama-3.1-ARC-Potpourri-Induction-8B, ~16GB bf16) is freely downloadable and runs on one 5090 / one L4. Use few-shot sampling (k=32-256 programs per task) + train-pair execution filter; no API.",
+        "adjusted_delta_pp": "+0.5 to +1.5 pp (center ~+1.0; ~30% chance of ~0 net-new on ARC-AGI-2)",
+        "effort": "L",
+        "priority": 34,
+        "needs_base_resft": false,
+        "first_experiment": "Download barc0/Llama-3.1-ARC-Potpourri-Induction-8B. On 30 ARC-AGI-2 eval tasks, sample 128 programs/task (vLLM, temp~0.8), execute each on train pairs in a sandboxed subprocess with a 2s timeout, keep programs fitting all train pairs, execute on test input, and measure: (i) tasks with >=1 train-consistent program; (ii) of those, test-correct rate; (iii) the NEW tasks solved that NVARC's transduction missed (the complementarity number that actually matters). Time-budget check: programs/task and seconds/task to confirm it fits within the 12h L4x4 budget alongside TTFT. One 5090 suffices for the dev run.",
+        "risks": "(1) Distribution shift is the killer: BARC's induction-8B is trained on ARC-Heavy/Potpourri synth data mimicking ARC-AGI-1, which ARC-AGI-2 was explicitly designed to defeat. Standalone BARC-style induction on ARC-AGI-2 is near floor (low single digits), so the *incremental* solved-set on top of NVARC will be tiny and partly overlapping. (2) The cited 56.75% ensemble / 38-43% single numbers are ARC-AGI-1 (arXiv 2411.02272, 400 eval) — they do NOT transfer; proposal honestly scopes the delta down, but even +1 to +3pp is optimistic given the recall collapse. (3) Pang 26%/Berman 29% use frontier-API induction with large sample counts + self-debug loops — an offline 8B at k=128 is a different regime, not \"a fraction.\" (4) Engineering/budget: adds a second model + a hardened code-execution sandbox (subprocess, timeout, import restriction) inside Kaggle — new failure surface; 8B+exec over ~240 tasks pressures the 12h budget unless run on a dedicated GPU and gated to low-confidence transductive tasks. Effort is genuinely L, plausibly under-stated."
+      },
+      {
+        "vector": "ttft",
+        "name": "LoRA target/rank tuning for test-time regime (keep embed_tokens+lm_head; test r=128 vs 256 for speed; rank for embeddings)",
+        "mechanism": "NVARC's TTFT LoRA targets attn+MLP+embed_tokens+lm_head at r=256/alpha=32 rslora. Including embed/lm_head matters for the 16-token grid vocab (the only place new grid-symbol statistics can be learned), so those must stay. But r=256 over 16 steps may be both slow and under-trained; the TTT literature shows diminishing returns past task intrinsic-dim and the ARChitects used r=32 at test time. A lower r (128) trains faster (allowing more augmentations within the same budget — synergy with idea 1) and can match accuracy. Conversely, alpha/rslora scaling interacts with our short schedule and should be swept.",
+        "adjusted_delta_pp": "0 to +0.7 pp (realistic center ~+0.2 pp; mostly a hygiene/memory sweep, NOT a real step-buying lever)",
+        "effort": "S",
+        "priority": 28,
+        "needs_base_resft": false,
+        "first_experiment": "On 40 tasks, sweep lora_r in {128,256} x alpha in {16,32} (rslora on), keeping embed_tokens+lm_head in targets, and re-invest any per-task time saved into more augmentations. Compare pass@2 AND per-task wall time; the win is iso-accuracy at lower time -> reallocate to steps.",
+        "risks": "See risks field."
+      },
+      {
+        "vector": "neuro_symbolic",
+        "name": "Execution-verification re-ranking of EXISTING neural candidates (program-fit precision bonus in the vote)",
+        "mechanism": "Today vote.py scores each candidate grid by score = dfs_count + mean_per_aug_logprob. Add a third, dominant additive term: for each unique candidate output, attempt to SYNTHESIZE a short program (in a tiny ARC DSL: flips/rotations/transpose/color-maps/tiling/crop-to-bbox/gravity/symmetrize/connected-component recolor, ~30 primitives, depth<=3 composition) that maps every train INPUT to its train OUTPUT AND maps the test input to THIS candidate. If such a program exists and fits ALL train pairs exactly, add a large bonus (e.g. +1000) so verified candidates win the top-2. This is execution-verification used purely as a selection signal, not as a generator — it never proposes new answers, only re-orders neural ones, so it can only help pass@2, never hurt (a program fitting k>=2 train pairs almost never maps the test input to a wrong grid by accident). Directly mirrors ABPR's 'diversity-prioritised voting to select top-2 programs maximizing consensus and verification consistency'.",
+        "adjusted_delta_pp": "+0.0 to +0.5 pp (best-estimate +0.3); the claimed +0.5 to +2.5 is inflated and the \"no downside by construction\" claim is false",
+        "effort": "S",
+        "priority": 28,
+        "needs_base_resft": false,
+        "first_experiment": "Write src/arc/verify.py with a ~30-primitive numpy DSL and a depth<=2 brute-force `synthesize(train_pairs)->list[programs that fit ALL train pairs]` (budget ~50k compositions, <1s/task on CPU). On the 120 ARC-AGI-2 eval tasks, dump the current candidate dict per task (from generate_candidates), and measure: (i) on how many tasks does ANY synthesized program fit all train pairs; (ii) of those, how often the program's predicted test output equals the gold; (iii) simulate adding the +1000 bonus to vote.score_candidates and recompute pass@2 vs the current voting. Report pass@2 delta. Run entirely on CPU/one 5090; no model retrain.",
+        "risks": "1) \"No downside by construction\" is FALSE: a depth<=3, ~30-primitive program that fits all train pairs does NOT guarantee the correct test output. ARC-AGI-2 (median 2-3 train pairs) is deliberately built so short shortcut-rules fit the demos but fail the test. A verified-but-wrong program that maps the test input to a grid the model also generated would get +1000 and DISPLACE a correct neural candidate that NLL-voting ranked #1/#2 -> real pass@2 loss. The bonus must be a guarded soft tiebreaker (e.g. require >=3 train pairs, never override neural top-1), not a hard +1000.\n2) Core empirical problem: a tiny DSL solves almost nothing on ARC-AGI-2. 32% of the 120 eval tasks aren't even shape-preserving (e.g. 0934a4d8 maps 30x30->9x4) so flip/rot/transpose/colormap can't fire; the benchmark was specifically redesigned vs ARC-AGI-1 to defeat brute-force DSL search. Pure-DSL solvers that hit ~40% on ARC-AGI-1 collapse to ~1-5% on ARC-AGI-2. The fraction of tasks where ANY such program fits all train pairs AND rescues a correct-but-mis-ranked neural candidate is tiny -> expected delta ~0.\n3) NVARC's augmentation-NLL vote is already strong: when the correct grid is generated it is usually already top-2, so the \"rescue a #3+ candidate\" mechanism rarely has anything to rescue.\n4) Evidence is inflated: the headline \"ABPR\" citation (arxiv 2603.20334) is unverifiable and looks fabricated; real induction work (Combining Induction+Transduction, BARC, CodeIt) uses train-execution to filter LLM-GENERATED programs, not a standalone 30-primitive brute-forcer, and none demonstrates a pass@2 gain from a tiny DSL on ARC-AGI-2.\n5) Minor: first experiment needs a full 120-task candidate dump first (repro_decoded.pkl currently has only 2 tasks); a decode pass on the 5090 is a few hours, not free."
+      },
+      {
+        "vector": "neuro_symbolic",
+        "name": "Symbolic SHORTLIST as a candidate SOURCE for easy/compositional-primitive tasks (verifier-gated injection)",
+        "mechanism": "Same DSL synthesizer as idea 1, but now its verified test prediction is INJECTED as a first-class candidate even when the neural model failed to generate it at all. ARC-AGI-2 deliberately strips out 2020-brute-forceable tasks, so a flat icecuber/Hodel search adds almost nothing on its own (icecuber=1.6% on ARC-AGI-2). The point is NOT coverage breadth; it is to catch the residual handful of tasks that are a clean composition of a few geometric/color primitives the LLM happened to mis-decode (e.g. an exact transpose+recolor the neural sampler rounded wrong). Gate strictly: only inject when a program fits ALL train pairs, so precision stays ~1.0.",
+        "adjusted_delta_pp": "+0 to +0.5 pp (point estimate ~+0.3 pp); realistically near-zero net after pass@2 displacement risk",
+        "effort": "S",
+        "priority": 14,
+        "needs_base_resft": false,
+        "first_experiment": "Reuse the idea-1 synthesizer. On the 120 eval tasks, count tasks where (a) a program fits all train pairs AND (b) the neural pipeline did NOT already have the gold in its candidate set. That count is the theoretical added coverage. Then verify the program's test prediction matches gold on those. If the net new-solve count is 0-1 of 120, deprioritize; if 3+, keep. Pure CPU.",
+        "risks": "see risks field"
+      }
+    ]
+  }
+}

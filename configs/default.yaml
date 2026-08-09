@@ -1,0 +1,46 @@
+# Default config for the ARC-AGI-2 solver. Numbers track the NVARC recipe;
+# `dev_small` overrides (below) make a fast local smoke-test on one RTX 5090.
+
+model:
+  # Path A: point base_model at the NVARC SFT'd checkpoint once obtained.
+  # Path B / dev: a stock small Qwen we can fine-tune locally.
+  base_model: "Qwen/Qwen3-0.6B"      # dev default; swap to 4B / NVARC ckpt for real runs
+  dtype: "bfloat16"
+  attn_implementation: "sdpa"        # Blackwell-safe; "flash_attention_2" if it builds
+  reduce_vocab: true                 # prune embedding table to the 16 grid tokens
+  max_seq_len: 8192
+
+ttft:                                 # per-task test-time training (LoRA)
+  lora_r: 256
+  lora_alpha: 32
+  lora_dropout: 0.0
+  target_modules: ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+  steps: 128
+  lr: 1.0e-4
+  batch_size: 1
+  grad_checkpointing: false
+  augment_per_step: true             # a distinct random augmentation each step
+
+decode:
+  strategy: "sample"                 # "sample" now; "dfs" (batched) is the NVARC speed win
+  num_candidates: 16
+  temperature: 1.0
+  top_p: 0.95
+  max_new_tokens: 1024
+
+vote:
+  num_augmentations: 8               # m=8 shared augmentations for re-scoring
+  # score(s) = dfs_count(s) + (1/m) * sum_j log P_j(s)   ->  top-2 = pass@2
+
+eval:
+  data_dir: "data/arc-agi-2/evaluation"
+  holdout_seed: 0
+  limit: null                        # cap #tasks for quick runs
+
+# ---- fast local smoke profile ----
+dev_small:
+  model: { base_model: "Qwen/Qwen3-0.6B", max_seq_len: 4096 }
+  ttft:  { steps: 8 }
+  decode: { num_candidates: 4, max_new_tokens: 512 }
+  vote:  { num_augmentations: 4 }
+  eval:  { limit: 5 }

@@ -1,0 +1,21 @@
+# Core (already present in the dev env: torch 2.11+cu130, transformers 5.9, vllm 0.21,
+# accelerate, datasets, numpy). Listed for reproducibility / Kaggle.
+numpy
+pyyaml
+tqdm
+
+# Training / PEFT stack.
+# NOTE (Blackwell sm_120 / CUDA 13): install these *after* verifying GPU import.
+# unsloth + flash-attn may not have prebuilt Blackwell wheels — fall back to
+# transformers + peft with torch SDPA attention if so (see scripts/setup_gpu_env.sh).
+peft>=0.13
+trl>=0.12
+bitsandbytes>=0.45   # optional; only needed for QLoRA / 4-bit
+# unsloth                # optional fast-path; verify Blackwell build before relying on it
+# flash-attn             # optional; SDPA fallback works without it
+
+# Data download / submission
+kaggle>=1.6
+
+# Dev
+pytest

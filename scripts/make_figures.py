@@ -83,19 +83,24 @@ def fig1(sols):
 
 def fig2():
     # sourced from data/discussions: NVARC 30.5->27 (winner post), TRM 22->10.83,
-    # TOPAS 36->11.67 (Bitterbot post). Bars = local eval vs public LB.
-    fams = ["LLM + TTT\n(NVARC)", "Tiny Recursive\n(TRM)", "Deep-recursive\n(TOPAS)"]
-    local = [30.5, 22.0, 36.0]; lb = [27.0, 10.83, 11.67]
+    # TOPAS 36->11.67 (Bitterbot post); "ours" = our two submissions: shallow
+    # (local per-task 22.8 -> LB 25.00) and deep (local 25.2 = shallow + paired
+    # +2.4pp -> LB 19.17). Bars = local eval vs leaderboard.
+    fams = ["LLM + TTT\n(NVARC)", "LLM + TTT\n(ours, shallow)", "LLM + TTT\n(ours, deep)",
+            "Tiny Recursive\n(TRM)", "Deep-recursive\n(TOPAS)"]
+    local = [30.5, 22.8, 25.2, 22.0, 36.0]; lb = [27.0, 25.0, 19.17, 10.83, 11.67]
     drop_rel = [(l - b) / l * 100 for l, b in zip(local, lb)]
-    fig, ax = plt.subplots(figsize=(7, 4.2))
+    fig, ax = plt.subplots(figsize=(8.4, 4.2))
     x = np.arange(len(fams)); w = 0.38
     ax.bar(x - w/2, local, w, label="local public-eval", color="#55A868")
     ax.bar(x + w/2, lb, w, label="public leaderboard", color="#C44E52")
     for i in range(len(fams)):
-        ax.text(i, max(local[i], lb[i]) + 1.2, f"-{drop_rel[i]:.0f}% rel", ha="center", fontsize=9)
+        s = f"-{drop_rel[i]:.0f}% rel" if drop_rel[i] >= 0 else f"+{-drop_rel[i]:.0f}% rel"
+        ax.text(i, max(local[i], lb[i]) + 1.2, s, ha="center", fontsize=9)
     ax.set_xticks(x); ax.set_xticklabels(fams)
     ax.set_ylabel("pass@2 (%)"); ax.set_ylim(0, 45)
-    ax.set_title("Fig 2. Eval->LB generalization gap by approach family\n(LLM+TTT is far more LB-robust; sourced from the 2026 forum)")
+    ax.set_title("Fig 2. Eval->LB generalization gap by approach family\n"
+                 "(LLM+TTT is far more LB-robust; forum-sourced + our v7 submission)")
     ax.legend(fontsize=9); fig.tight_layout()
     fig.savefig(os.path.join(FIG, "fig2_family_gap.png"), dpi=130); plt.close(fig)
     print("wrote fig2_family_gap.png")

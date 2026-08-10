@@ -37,13 +37,17 @@ Recursive Model and a comparable collapse for a deep-recursive model — i.e. LL
 leaderboard points (dynamic GPU scheduling and never emitting placeholder
 predictions) and a silent tokenizer bug that zeroes the model on modern libraries.
 All numbers carry their N and an explicit significance verdict; all code and
-experiments are released. The study is now **leaderboard-confirmed**: our
-shallow-config submission scored **25.00** on the leaderboard (semi-private set; a
-slightly *positive* eval→LB gap), while the deep-pool config — locally +2.4 pp —
-**regressed to 19.17**. The two first-party points *straddle* the family calibration,
-and their spread across two configurations of the same system exceeds the
-between-family gaps the calibration rests on — an instructive inversion analyzed in
-§6.1 and §7.
+experiments are released. The study is now **leaderboard-confirmed** across four
+submissions: our shallow-config submission scored **25.00** (semi-private set; a
+slightly *positive* eval→LB gap) and its byte-identical resubmit **24.17** — a first
+thin bound on same-code rerun noise (0.8 pp, n=2 runs) — while the deep-pool config,
+locally +2.4 pp, **regressed to 19.17**, far outside that bound. A fourth submission
+runs the *same model checkpoint* through the community's public optimized engine and
+scores **28.47**: ~+4 pp bought purely by engine throughput that converts the 12 h
+budget into per-task compute (§7). The two config points *straddle* the family
+calibration, and their spread across two configurations of the same system exceeds
+the between-family gaps the calibration rests on — an instructive inversion analyzed
+in §6.1 and §7.
 
 **Contributions.** (1) A faithful single-GPU reproduction of the winning recipe, plus
 a fix for a library-version tokenizer bug that silently scores 0. (2) The
@@ -298,6 +302,22 @@ is not merely the safe default; on the real leaderboard it dominates.** Local pa
 gains that are statistically unresolved should be treated as noise until they
 survive a submission.
 
+**Two further submissions complete the picture.** First, resubmitting the shallow
+config *byte-identically* scored 24.17 vs the original 25.00 — one same-code pair
+differing by 0.8 pp (n=2 runs; competitors report ±2 pp), which the 5.8 pp deep
+regression comfortably exceeds. Second, an attributed, unmodified fork of the
+community's public unsloth-based engine (mikelou1's efficiency patch of
+koushikrudra's baseline, advertised LB 33.89), running the **same sorokin 4B
+checkpoint** as all our submissions, scored **28.47**: with model, recipe family and
+scoring held fixed, engine throughput alone — converting the 12 h budget into
+per-task test-time compute where our stock-`transformers` port used 3.9 h of 12 —
+is worth **~+4 pp**. This is the "time" pillar measured with a controlled model.
+Notably, the fork also fell 5.4 pp short of the score its source advertises:
+public-kernel scores are themselves single draws of a budget-sensitive process, and
+we treat 28.47 vs 33.89 as an open reproducibility question (a rerun of the
+unmodified mother baseline is pending), not as a measured difference between the
+patch and its mother.
+
 **Table 2 — configs.** shallow: aug_n 8, DFS prob 0.2, 2 views, ~130 s/task —
 **LB 25.00**. deep: aug_n 16, DFS prob 0.1, 3 views, ~261 s/task — **LB 19.17**.
 Both fit 12 h on L4×4 via the dynamic queue; only shallow fits a single GPU under
@@ -357,10 +377,12 @@ relicensed.
 
 ## 9. Limitations and threats to validity
 
-- **Two submissions, not a distribution.** The leaderboard numbers (25.00 shallow,
-  19.17 deep) are single runs of a non-deterministic pipeline on which competitors
-  report ±2 pp resubmission noise; the *sign* of the deep-config regression is robust
-  to that noise, its magnitude is not. Grand-Prize eligibility (a linked Kaggle
+- **Four submissions, a thin distribution.** Our identical-code pair (25.00 / 24.17)
+  gives one first-party estimate of same-code rerun noise (0.8 pp, n=2) alongside
+  competitors' reported ±2 pp; the *sign* of the 5.8 pp deep-config regression is
+  robust to either figure, its magnitude less so. The engine-efficiency result
+  (28.47) is a single run, and its 5.4 pp shortfall vs the source kernel's
+  advertised 33.89 is unresolved. Grand-Prize eligibility (a linked Kaggle
   submission) is satisfied.
 - **Small samples.** Most A/Bs are n=20–78; as Table 1 states, sub-~10 pp effects are
   within CI. The robust claims are the *true zeros* (DSL 0/167, induction 0/166 eval)

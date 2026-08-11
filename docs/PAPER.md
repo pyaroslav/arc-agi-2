@@ -37,14 +37,16 @@ Recursive Model and a comparable collapse for a deep-recursive model — i.e. LL
 leaderboard points (dynamic GPU scheduling and never emitting placeholder
 predictions) and a silent tokenizer bug that zeroes the model on modern libraries.
 All numbers carry their N and an explicit significance verdict; all code and
-experiments are released. The study is now **leaderboard-confirmed** across four
+experiments are released. The study is now **leaderboard-confirmed** across five
 submissions: our shallow-config submission scored **25.00** (semi-private set; a
 slightly *positive* eval→LB gap) and its byte-identical resubmit **24.17** — a first
 thin bound on same-code rerun noise (0.8 pp, n=2 runs) — while the deep-pool config,
-locally +2.4 pp, **regressed to 19.17**, far outside that bound. A fourth submission
-runs the *same model checkpoint* through the community's public optimized engine and
-scores **28.47**: ~+4 pp bought purely by engine throughput that converts the 12 h
-budget into per-task compute (§7). The two config points *straddle* the family
+locally +2.4 pp, **regressed to 19.17**, far outside that bound. Two further
+submissions run the *same model checkpoint* through the community's public optimized
+engine and score **28.47 and 30.14**: **+5 to +6 pp bought purely by engine
+throughput** that converts the 12 h budget into per-task compute — the largest
+single effect in this study — while both fall ~4-5 pp short of that engine's
+advertised leaderboard score (§7). The two config points *straddle* the family
 calibration, and their spread across two configurations of the same system exceeds
 the between-family gaps the calibration rests on — an instructive inversion analyzed
 in §6.1 and §7.
@@ -312,11 +314,16 @@ checkpoint** as all our submissions, scored **28.47**: with model, recipe family
 scoring held fixed, engine throughput alone — converting the 12 h budget into
 per-task test-time compute where our stock-`transformers` port used 3.9 h of 12 —
 is worth **~+4 pp**. This is the "time" pillar measured with a controlled model.
-Notably, the fork also fell 5.4 pp short of the score its source advertises:
-public-kernel scores are themselves single draws of a budget-sensitive process, and
-we treat 28.47 vs 33.89 as an open reproducibility question (a rerun of the
-unmodified mother baseline is pending), not as a measured difference between the
-patch and its mother.
+Notably, both engine submissions fell short of the score their source advertises: a
+fifth submission reran the *unmodified mother baseline* itself (one-line mount-path
+fix only) and scored **30.14** — our best — against its advertised 33.89. Two
+independent reruns of the advertised-33.89 family thus land at 28.47 and 30.14:
+**advertised public-kernel scores overstate rerun expectations by ~4-5 pp** for this
+budget-sensitive family, a caution that applies equally to the ~34-pp "pack" of
+leaderboard entries riding these kernels. Our full first-party ladder — 24.17/25.00
+(stock `transformers`, one third of the budget used) → 28.47/30.14 (community
+unsloth engine, full budget, same model checkpoint) — measures the engine/budget
+lever at **+5 to +6 pp**, the largest single effect in this study.
 
 **Table 2 — configs.** shallow: aug_n 8, DFS prob 0.2, 2 views, ~130 s/task —
 **LB 25.00**. deep: aug_n 16, DFS prob 0.1, 3 views, ~261 s/task — **LB 19.17**.
@@ -380,10 +387,11 @@ relicensed.
 - **Four submissions, a thin distribution.** Our identical-code pair (25.00 / 24.17)
   gives one first-party estimate of same-code rerun noise (0.8 pp, n=2) alongside
   competitors' reported ±2 pp; the *sign* of the 5.8 pp deep-config regression is
-  robust to either figure, its magnitude less so. The engine-efficiency result
-  (28.47) is a single run, and its 5.4 pp shortfall vs the source kernel's
-  advertised 33.89 is unresolved. Grand-Prize eligibility (a linked Kaggle
-  submission) is satisfied.
+  robust to either figure, its magnitude less so. The engine-efficiency estimate
+  (+5 to +6 pp) rests on two runs of the community engine (28.47, 30.14) against
+  two of ours (24.17, 25.00) — consistent, but still a thin sample of a
+  budget-sensitive process. Grand-Prize eligibility (a linked Kaggle submission) is
+  satisfied.
 - **Small samples.** Most A/Bs are n=20–78; as Table 1 states, sub-~10 pp effects are
   within CI. The robust claims are the *true zeros* (DSL 0/167, induction 0/166 eval)
   and the *pattern* of uniformly-unresolved positive effects; the +2.4 pp deep-pool and

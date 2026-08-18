@@ -153,7 +153,7 @@ not statistically resolved*. We report them anyway, with that caveat, because th
 | Free selection sweep (count-wt × {sum,mean,geom} aug-NLL) | +0 to +1 pp (≤1 task) | 78 | no | NVARC scorer already near-optimal |
 | Learned verifier (GBM): group-CV at 29 pos → train-on-1,000-training-tasks transfer at 1,037 pos | **−1.3 pp** → **+1.3 pp** (25→26 of 78) | 78 test outputs | no (±1 output) | 36× data flips the sign but adds ≤1 output; top feature is the aug-NLL rank kgmon already uses |
 | Symbolic DSL (~15 rules, depth-2, train-consistent) | **0 / 167** outputs | 167 | yes (true 0) | ARC-AGI-2 defeats brute-force DSL |
-| 8B induction (BARC, execute-verify, 48–64 prog/task) | training **23%** (7/30 tasks); **eval 0 / 166** net-new | 166 | yes (true 0 on eval) | strong in-distribution; defeated by eval set |
+| Program induction, three generators: BARC-8B (48–64 prog/task); Qwen2.5-Coder-7B-Instruct + repair round (8+6 prog/task); symbolic DSL (row below) | BARC: training **23%** (7/30 tasks), **eval 0/166** net-new; Coder-7B: **0 verified / 120 eval** (best 1/5 train pairs, once) | 166 / 120 | yes (true 0 on eval, twice) | strong in-distribution (BARC); eval defeats execution-verified induction from every accessible generator |
 
 Two single-knob ablations: aug_n 8→16 *alone*, and "more views + lower threshold"
 *alone*, each measured **+0.0 pp oracle** (n=20–24). Only the *combined* deep config

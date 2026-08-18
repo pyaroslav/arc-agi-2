@@ -20,10 +20,14 @@ oracle (is the correct grid anywhere in the candidate pool?) against achieved pa
 we show the dominant loss is **coverage** — the model never generates the right grid —
 not mis-ranking. Across five inference-time levers (selection tuning, a learned
 verifier, deeper decoding, a symbolic DSL solver, and 8B program induction with BARC)
-and two training-time levers (continued fine-tuning on locally-generated harder data,
-and our own vocab-cut Qwen3-8B base trained on the same corpus — §4.1), **none
-produces an effect distinguishable from zero at our sample sizes, and the 8B base is
-directionally *worse*** (11.1% vs 22.8% per-task, paired n=30); the largest positive
+and three training-time levers (continued fine-tuning on locally-generated harder
+data, our own vocab-cut Qwen3-8B base trained on the same corpus, and continued
+fine-tuning on 24k *frontier-LLM-generated* tasks loss-filtered to the slice the
+base does not know — §4.1), **none produces an effect distinguishable from zero at
+our sample sizes; the 8B base is directionally *worse*** (11.1% vs 22.8% per-task,
+paired n=30) **and the frontier-data run is exactly null** (44/133 vs 44/133
+paired, 4 discordant each way — evidence that test-time training washes out
+base-model deltas); the largest positive
 point estimate (a deeper candidate pool, +2.4 pp paired) rests on a 3-vs-2 split of
 discordant outputs (exact McNemar p = 1.0) — and *inverted* on the real leaderboard
 (§7). This *is* the saturation result: test-time compute of the same kind does not
@@ -170,6 +174,7 @@ TTFT→decode→vote configuration as the baseline (per-task pass@2 22.8%).
 |---|---|---|---|---|
 | Continued-FT of the 4B on locally-generated *harder* data (compositional generator; 2k tasks, ~2× harder by loss: 0.10 vs 0.05) | **±0.0 pp** (identical 22.8%) | 30 tasks, paired | no | locally-generated difficulty ≠ frontier-grade difficulty |
 | 8B base (vocab-cut Qwen3-8B, LoRA r=256 incl. embeddings, 1 epoch / 526M packed tokens of the same corpus, ~74 GPU-h) | **−11.7 pp** (11.1% vs 22.8%) | 30 tasks, paired | no (within CI) but directionally negative | scale does not compensate for corpus depth |
+| Continued-FT on *frontier-generated OOD* data: 24k GPT-4o-generated BARC-HEAVY tasks, loss-filtered to the slice the base has not absorbed (>0.10; 25% of 95k), + retention mix | **±0.0 pp** (44/133 = 33.1% both; discordant 4 vs 4) | 133 outputs, paired | exactly null | even frontier-quality OOD data does not move eval; TTT washes out base deltas |
 
 The 8B result deserves its cautionary tale. A first run at peak lr 2e-4 (the
 recipe's 1e-4, doubled) **diverged at step ~200** — loss 0.3 → 3.3, *above* the
@@ -185,10 +190,26 @@ healthy 133 s/task decode work, 4/30 tasks with at least one correct output
 simply **weaker than the winner's 4B**: teacher-forced loss on ARC-train examples 0.082 vs the 4B's 0.017.
 Our one-epoch pass over NVARC-synthetic + ARC-train + locally-generated data cannot
 match the corpus scale and training depth behind the released 4B checkpoint, and 2×
-the parameters do not close that gap; they appear to widen it at equal data. Both
-rows point the same way: **the binding constraint is the training corpus, not the
-parameter count and not local data generation** — consistent with §5's conclusion
-that new coverage requires a stronger base *trained on stronger data*.
+the parameters do not close that gap; they appear to widen it at equal data.
+
+The third row removes the last excuse. Where the harder-data row used *procedurally*
+generated tasks (which probed barely above the base's competence), this experiment
+used **frontier-LLM-generated data**: we streamed 95k GPT-4o-generated BARC-HEAVY
+tasks through the base and kept exactly the 24k the model measurably does not know
+(teacher-forced loss > 0.10; the kept slice averages ~3× the loss of NVARC's own
+synthetic corpus). Training was clean (loss 0.13 → 0.085 over 783 steps with a
+retention mix), and a 30-task A/B even flashed +1.6 pp — which the paired extension
+to **133 outputs erased exactly: 44/133 vs 44/133, four discordant outputs each
+way**. The FT model solves *slightly different* outputs, not *more* outputs. Our
+working hypothesis, consistent with §6's robustness mechanism: **per-task test-time
+training washes out base-model deltas** — whatever the base absorbs at training
+time, TTT re-adapts both models onto the same per-task solutions, so training-time
+interventions at locally-feasible scale shuffle the solved set without growing it.
+All three rows point the same way: **the binding constraint is not parameter count,
+not local data generation, and not even frontier-generated data at 10^4-task scale —
+new eval coverage evidently requires the winner-scale combination of corpus and
+training depth**, consistent with §5's conclusion that coverage requires a stronger
+base *trained on stronger data*.
 
 ![Fig 1](figures/fig1_coverage.png)
 *Fig 1. The gap is coverage, not selection: oracle ceiling vs achieved pass@2 for

@@ -47,6 +47,7 @@ def main():
     ap.add_argument("--eval-aug-n", type=int, default=2)
     ap.add_argument("--dfs-prob", type=float, default=0.2, help="DFS keep threshold (lower=more coverage)")
     ap.add_argument("--lr", type=float, default=5e-5)
+    ap.add_argument("--ttt-epochs", type=int, default=1, help="passes over the augmented task set per TTFT")
     ap.add_argument("--per-task-budget", type=float, default=900.0)
     ap.add_argument("--resume", action="store_true", help="reuse the cache pkl; skip done tasks")
     ap.add_argument("--pkl-out", default="outputs/repro_decoded.pkl", help="candidate cache path")
@@ -83,7 +84,8 @@ def main():
             continue
         t0 = time.time()
         try:
-            solver.train_task(solve_data.change_keys([key]), aug_n=args.aug_n, lr=args.lr)
+            solver.train_task(solve_data.change_keys([key]), aug_n=args.aug_n, lr=args.lr,
+                              epochs=args.ttt_epochs)
             dr = solver.solve_task(key, solve_data, eval_aug_n=args.eval_aug_n,
                                    end_time=time.time() + args.per_task_budget)
         except Exception as e:

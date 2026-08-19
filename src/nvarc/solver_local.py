@@ -193,7 +193,8 @@ class LocalSolver:
     def reset_lora(self):
         set_peft_model_state_dict(self.model, {k: v.clone() for k, v in self.init_state.items()})
 
-    def train_task(self, puzzle_ds, *, aug_n=16, lr=5e-5, seed=1, log=False, grad_ckpt=True):
+    def train_task(self, puzzle_ds, *, aug_n=16, lr=5e-5, seed=1, log=False, grad_ckpt=True,
+                   epochs=1):
         self.reset_lora()
         self.model.train()
         if grad_ckpt:
@@ -209,9 +210,14 @@ class LocalSolver:
         rng.shuffle(examples)
         params = [p for p in self.model.parameters() if p.requires_grad]
         opt = torch.optim.AdamW(params, lr=lr, weight_decay=0.0)
-        total = max(1, len(examples))
+        total = max(1, len(examples) * epochs)
         sched = get_cosine_schedule_with_warmup(opt, int(0.1 * total), total)
-        for step, ids in enumerate(examples):
+        run = []
+        for ep in range(epochs):
+            order = list(examples)
+            np.random.default_rng(seed + ep).shuffle(order)
+            run.extend(order)
+        for step, ids in enumerate(run):
             labels = build_completion_labels(ids)
             if all(l == -100 for l in labels):
                 continue

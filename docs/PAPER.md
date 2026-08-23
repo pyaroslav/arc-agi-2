@@ -325,6 +325,20 @@ is not merely the safe default; on the real leaderboard it dominates.** Local pa
 gains that are statistically unresolved should be treated as noise until they
 survive a submission.
 
+**A recipe-level replication of the inversion.** After this paper's first
+leaderboard results, we found the strongest local effect of the whole study: a
+TTT-depth change (8 augmentations × 2 epochs instead of 16 × 1, equal token
+budget) measured **+3.6 pp paired on 138 outputs** (+8/−3 discordant) with a clean
+dose-response behind it. Deployed runtime-neutrally into the public engine, four
+independent leaderboard runs drew {27.64, 28.06, 29.31, 27.64} — mean 28.2 vs the
+unmodified engine's 29.2 over eight draws. **The largest paired local gain we ever
+measured transferred as ≈ −1 pp.** Together with the deep-pool inversion (+2.4
+local → −5.8 LB), the pattern is now replicated: *recipe changes tuned on
+public-eval pairs overfit the public distribution*; the semi-private set punished
+both pool-widening and adaptation-deepening. The only interventions that
+transferred in this study were engine/budget efficiency (+5–6 pp) and placeholder
+hygiene (≥ 0 by construction).
+
 **Two further submissions complete the picture.** First, resubmitting the shallow
 config *byte-identically* scored 24.17 vs the original 25.00 — one same-code pair
 differing by 0.8 pp (n=2 runs; competitors report ±2 pp), which the 5.8 pp deep

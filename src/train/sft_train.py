@@ -65,8 +65,8 @@ def collate(batch, device):
     ii, lab, att = [], [], []
     for b in batch:
         p = m - len(b["input_ids"])
-        ii.append(b["input_ids"] + [PAD_ID] * p)
-        lab.append(b["labels"] + [-100] * p)
+        ii.append(list(b["input_ids"]) + [PAD_ID] * p)
+        lab.append(list(b["labels"]) + [-100] * p)
         att.append([1] * len(b["input_ids"]) + [0] * p)
     return (torch.tensor(ii, device=device), torch.tensor(att, device=device),
             torch.tensor(lab, device=device))
@@ -92,6 +92,8 @@ def main():
     ap.add_argument("--save-every", type=int, default=0, help="checkpoint every N steps (0=only at end); enables spot-instance resume")
     ap.add_argument("--resume", action="store_true", help="continue LoRA training from <out>'s last checkpoint (weights + step; optimizer moments restart). No-op if <out> has no trainer_state.json.")
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--arrow-sources", nargs="*", default=None,
+                    help="dirs of arrow shards (sorokin corpus); replaces --sources")
     args = ap.parse_args()
     try:
         sys.stdout.reconfigure(line_buffering=True)
@@ -99,8 +101,12 @@ def main():
         pass
 
     print(f"building SFT data from {args.sources} (<= {args.max_examples} examples)...", flush=True)
-    data = build(args.sources, args.max_examples, args.max_seq_len, args.n_aug,
-                 args.pairs_per_example, args.seed)
+    if args.arrow_sources:
+        from train.arrow_data import build_arrow
+        data = build_arrow(args.arrow_sources, args.max_examples, args.max_seq_len, args.seed)
+    else:
+        data = build(args.sources, args.max_examples, args.max_seq_len, args.n_aug,
+                     args.pairs_per_example, args.seed)
     print(f"packed {len(data)} sequences | avg len {int(np.mean([len(d['input_ids']) for d in data]))}", flush=True)
 
     model = AutoModelForCausalLM.from_pretrained(args.base, dtype=torch.bfloat16,

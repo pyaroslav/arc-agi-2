@@ -94,6 +94,8 @@ def main():
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--arrow-sources", nargs="*", default=None,
                     help="dirs of arrow shards (sorokin corpus); replaces --sources")
+    ap.add_argument("--data-cache", default=None,
+                    help="npz path: load packed data if present, else build then save")
     args = ap.parse_args()
     try:
         sys.stdout.reconfigure(line_buffering=True)
@@ -102,8 +104,13 @@ def main():
 
     print(f"building SFT data from {args.sources} (<= {args.max_examples} examples)...", flush=True)
     if args.arrow_sources:
-        from train.arrow_data import build_arrow
-        data = build_arrow(args.arrow_sources, args.max_examples, args.max_seq_len, args.seed)
+        from train.arrow_data import build_arrow, save_packed, load_packed
+        if args.data_cache and os.path.exists(args.data_cache):
+            data = load_packed(args.data_cache)
+        else:
+            data = build_arrow(args.arrow_sources, args.max_examples, args.max_seq_len, args.seed)
+            if args.data_cache:
+                save_packed(data, args.data_cache)
     else:
         data = build(args.sources, args.max_examples, args.max_seq_len, args.n_aug,
                      args.pairs_per_example, args.seed)

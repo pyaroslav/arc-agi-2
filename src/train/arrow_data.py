@@ -75,3 +75,21 @@ def build_arrow(sources, max_rows, max_seq_len, seed=0):
     rng.shuffle(packed)
     print(f"arrow corpus: {n_seen} rows seen, {n_used} usable -> {len(packed)} packed", flush=True)
     return packed
+
+
+def save_packed(packed, path):
+    ids = np.concatenate([d["input_ids"] for d in packed])
+    lab = np.concatenate([d["labels"] for d in packed])
+    lens = np.asarray([len(d["input_ids"]) for d in packed], dtype=np.int32)
+    np.savez(path, ids=ids, labels=lab, lengths=lens)
+    print(f"saved packed cache: {len(packed)} seqs -> {path}", flush=True)
+
+
+def load_packed(path):
+    z = np.load(path, mmap_mode="r")
+    ids, lab, lens = z["ids"], z["labels"], z["lengths"]
+    offs = np.concatenate([[0], np.cumsum(lens)])
+    packed = [{"input_ids": ids[offs[i]:offs[i+1]], "labels": lab[offs[i]:offs[i+1]]}
+              for i in range(len(lens))]
+    print(f"loaded packed cache: {len(packed)} seqs from {path}", flush=True)
+    return packed

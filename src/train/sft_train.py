@@ -68,8 +68,9 @@ def collate(batch, device):
         ii.append(list(b["input_ids"]) + [PAD_ID] * p)
         lab.append(list(b["labels"]) + [-100] * p)
         att.append([1] * len(b["input_ids"]) + [0] * p)
-    return (torch.tensor(ii, device=device), torch.tensor(att, device=device),
-            torch.tensor(lab, device=device))
+    return (torch.tensor(ii, dtype=torch.long, device=device),
+            torch.tensor(att, dtype=torch.long, device=device),
+            torch.tensor(lab, dtype=torch.long, device=device))
 
 
 def main():

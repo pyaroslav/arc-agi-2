@@ -21,10 +21,11 @@ oracle (is the correct grid anywhere in the candidate pool?) against achieved pa
 we show the dominant loss is **coverage** — the model never generates the right grid —
 not mis-ranking. Across five inference-time levers (selection tuning, a learned
 verifier, deeper decoding, a symbolic DSL solver, and 8B program induction with BARC)
-and three training-time levers (continued fine-tuning on locally-generated harder
-data, our own vocab-cut Qwen3-8B base trained on the same corpus, and continued
+and four training-time levers (continued fine-tuning on locally-generated harder
+data, our own vocab-cut Qwen3-8B base trained on the same corpus, continued
 fine-tuning on 24k *frontier-LLM-generated* tasks loss-filtered to the slice the
-base does not know — §4.1), **none produces an effect distinguishable from zero at
+base does not know, and continued fine-tuning on 2.5B tokens of the winner's own
+released corpus — §4.1), **none produces an effect distinguishable from zero at
 our sample sizes; the 8B base is directionally *worse*** (11.1% vs 22.8% per-task,
 paired n=30) **and the frontier-data run is exactly null** (44/133 vs 44/133
 paired, 4 discordant each way — evidence that test-time training washes out
@@ -59,8 +60,8 @@ in §6.1 and §7.
 
 **Contributions.** (1) A faithful single-GPU reproduction of the winning recipe, plus
 a fix for a library-version tokenizer bug that silently scores 0. (2) The
-coverage-vs-selection decomposition and a measured saturation result over seven
-levers (five inference-time, two training-time), each with N and a significance
+coverage-vs-selection decomposition and a measured saturation result over nine
+levers (five inference-time, four training-time), each with N and a significance
 verdict. (3) A cross-family
 eval→LB generalization-gap calibration, now anchored by two submissions of our own —
 including a measured local-gain→leaderboard-regression inversion for the deep-pool

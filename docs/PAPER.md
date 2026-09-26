@@ -177,6 +177,7 @@ TTFT→decode→vote configuration as the baseline (per-task pass@2 22.8%).
 | Continued-FT of the 4B on locally-generated *harder* data (compositional generator; 2k tasks, ~2× harder by loss: 0.10 vs 0.05) | **±0.0 pp** (identical 22.8%) | 30 tasks, paired | no | locally-generated difficulty ≠ frontier-grade difficulty |
 | 8B base (vocab-cut Qwen3-8B, LoRA r=256 incl. embeddings, 1 epoch / 526M packed tokens of the same corpus, ~74 GPU-h) | **−11.7 pp** (11.1% vs 22.8%) | 30 tasks, paired | no (within CI) but directionally negative | scale does not compensate for corpus depth |
 | Continued-FT on *frontier-generated OOD* data: 24k GPT-4o-generated BARC-HEAVY tasks, loss-filtered to the slice the base has not absorbed (>0.10; 25% of 95k), + retention mix | **±0.0 pp** (44/133 = 33.1% both; discordant 4 vs 4) | 133 outputs, paired | exactly null | even frontier-quality OOD data does not move eval; TTT washes out base deltas |
+| Continued-FT on the *winner's own released corpus* (2.5B tokens of the public 3.2M-task set, 19,637 steps, clean convergence) | **−4.6 pp** (29.5% vs 34.1%; discordant 4 vs 10) | 129 outputs, paired | directionally negative | the released checkpoint sits at a selected optimum; more optimization on its own corpus *subtracts* |
 
 The 8B result deserves its cautionary tale. A first run at peak lr 2e-4 (the
 recipe's 1e-4, doubled) **diverged at step ~200** — loss 0.3 → 3.3, *above* the

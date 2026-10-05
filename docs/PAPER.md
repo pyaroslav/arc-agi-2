@@ -343,6 +343,8 @@ both pool-widening and adaptation-deepening. The only interventions that
 transferred in this study were engine/budget efficiency (+5–6 pp) and placeholder
 hygiene (≥ 0 by construction).
 
+**Time is fully spent, not wasted.** An instrumented run of the engine over all 120 public-eval tasks shows its time limits almost never bind: none of 667 decoding calls hit the 540 s cap, 8 of 120 tasks hit the 1,200 s per-task cap (3% of decoding batches skipped), and those 8 tasks solve at the same rate as the rest (25.0% vs 26.5%). Together with a neutral shortest-job-first scheduling test on the leaderboard (+0.6 pp over 3 draws), this closes the time lever: the engine's +5-6 pp came from using the whole budget, and there is no remaining budget to reallocate.
+
 **Two further submissions complete the picture.** First, resubmitting the shallow
 config *byte-identically* scored 24.17 vs the original 25.00 — one same-code pair
 differing by 0.8 pp (n=2 runs; competitors report ±2 pp), which the 5.8 pp deep

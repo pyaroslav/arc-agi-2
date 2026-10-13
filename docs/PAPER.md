@@ -34,7 +34,10 @@ point estimate (a deeper candidate pool, +2.4 pp paired) rests on a 3-vs-2 split
 discordant outputs (exact McNemar p = 1.0) — and *inverted* on the real leaderboard
 (§7). This *is* the saturation result: test-time compute of the same kind does not
 add coverage on the hard eval distribution, and parameter scale without a deeper
-training corpus subtracts. **Second**, a
+training corpus subtracts. The one exception is pooling *independent* runs, which
+lifts the oracle from 35.5% to 48.6% over three runs (n=138), while pass@2 rises only
+to 36.2%. Once the pool is that deep, selection becomes the bottleneck (§5).
+**Second**, a
 *generalization-gap calibration* across approach families, drawn from the competition
 forum: the LLM+test-time-training family loses ~3.5 pp absolute (~11% relative) from
 public eval to leaderboard, versus ~11 pp absolute (~51% relative) for a Tiny
@@ -250,6 +253,32 @@ search" thesis, here measured. New coverage requires a *different generation mec
 or a stronger base model*, not more search — consistent with symbolic search (0/167)
 and offline induction (0/166) adding nothing on the eval distribution.
 
+**One exception, and where it stalls: pooling independent runs.** Widening *one*
+run barely moves coverage, but merging the candidate pools of *independent* runs
+does. On 138 paired public-eval outputs we merged the pools of three local runs
+(A: the submission config; B: aug_n=16; C: two TTFT epochs) and re-ranked each merged
+pool with the same score_kgmon selector (`scripts/analyze_pooling.py`):
+
+| Pool | Oracle | pass@2 | vs A (gained/lost outputs) |
+|---|---|---|---|
+| A alone | 35.5% | 31.9% | — |
+| A+B | 44.2% | 34.1% | +5 / −2 (McNemar p = 0.45) |
+| A+C | 44.9% | 35.5% | +6 / −1 (p = 0.12) |
+| A+B+C | **48.6%** | 36.2% | +7 / −1 (p = 0.07) |
+
+Coverage climbs by +13 pp across three runs. TTFT stochasticity reaches
+transformations that a single run's wider decoding does not, so run-to-run variance
+is itself a coverage source. But selection converts only about a third of it: the
+oracle↔pass@2 gap widens from 3.6 pp (one run) to 12.4 pp (three runs). This is the
+winner's "scorer missed 10%" regime reproduced from our side. Once the pool is deep,
+**selection becomes the bottleneck**, and our fixed and learned selectors (§4) do not
+close it. Two costs keep this off the leaderboard. A single pass over the 240 hidden
+tasks already uses ~10.7 of the 12 h, so a second independent pass means halving each
+one. And a pool-widening change has inverted on the leaderboard once already (deep
+pool: +2.4 pp local → −5.8 pp LB). We report pooling as the clearest remaining
+headroom, and selection over deep pools as the open problem it exposes. We did not
+submit it.
+
 ---
 
 ## 6. The other half: generalization and time
@@ -391,6 +420,7 @@ python -m pytest tests/ -q                                                   # c
 python scripts/repro_nvarc.py --limit 60 --aug-n 16 --eval-aug-n 3 --dfs-prob 0.1
 python scripts/analyze_selection.py --pkl outputs/cache_deep.pkl             # oracle/selection gap
 python scripts/sweep_selection.py  --pkl outputs/cache_deep.pkl              # free-selector sweep
+python scripts/analyze_pooling.py A=outputs/cache_aug8.pkl B=outputs/cache_aug16.pkl C=outputs/cache_ttt_ep2.pkl  # cross-run pooling
 python scripts/train_verifier.py   --pkl outputs/cache_deep.pkl              # learned verifier (group-CV)
 python scripts/repro_nvarc.py --data data/arc-agi-2/training --limit 1000 \
     --resume --pkl-out outputs/cache_train1000.pkl                          # verifier training cache

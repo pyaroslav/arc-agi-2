@@ -9,11 +9,17 @@ COMP=arc-prize-2026-arc-agi-2
 CONF=outputs/daily_submit_config
 cd "$(dirname "$0")/.." || exit 1
 
-while [ "$(date -u +%Y%m%d)" -le "20261101" ]; do
-  # sleep until next 00:20 UTC
-  now=$(date -u +%s)
-  tomorrow=$(date -u -d "tomorrow 00:20" +%s)
-  sleep $(( tomorrow - now ))
+# Check today's slot immediately on start (catches days the machine was off at
+# 00:20 and came back later), then once per day at 00:20 UTC.
+first=1
+while [ "$(date -u +%Y%m%d)" -le "20261102" ]; do
+  if [ -z "$first" ]; then
+    now=$(date -u +%s)
+    tomorrow=$(date -u -d "tomorrow 00:20" +%s)
+    sleep $(( tomorrow - now ))
+  fi
+  first=
+  [ "$(date -u +%Y%m%d)" -le "20261102" ] || break
   [ -f "$CONF" ] || { echo "$(date -u) no config; stopping"; break; }
   today=$(date -u +%Y-%m-%d)
   last=$(kaggle competitions submissions -c $COMP 2>/dev/null | sed -n 3p | awk '{print $3}')

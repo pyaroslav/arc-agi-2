@@ -5,9 +5,10 @@ public-eval→leaderboard generalization gap — built on a clean single-GPU
 reproduction of the 2025 winner, with every claimed effect reported with its
 sample size and an explicit significance verdict.**
 
-*ARC Prize 2026 — ARC-AGI-2 (offline track). Fifteen first-party leaderboard
-submissions, including repeated same-code draws that bound rerun variance; see
-§3, §7 and §9. Best score: 31.94.*
+*ARC Prize 2026 — ARC-AGI-2 (offline track). Seventy-nine first-party leaderboard
+submissions: fifteen configuration runs plus a same-code rerun series that measures
+leaderboard noise; see §3, §7 and §9. Best score: 33.06 (submission 57502566).*
+<!-- Re-pick the best submission after the Nov 2 00:20 UTC draw scores; keep in sync with docs/WRITEUP_KAGGLE.md. -->
 
 ---
 
@@ -47,8 +48,8 @@ leaderboard points (dynamic GPU scheduling and never emitting placeholder
 predictions) and a silent tokenizer bug that zeroes the model on modern libraries.
 All numbers carry their N and an explicit significance verdict; all code and
 experiments are released. The study is now **leaderboard-confirmed** across
-fifteen submissions (five distinct configurations plus repeated same-code draws
-that measure rerun variance — best 31.94, spread ~4 pp): our shallow-config submission scored **25.00** (semi-private set; a
+79 submissions (five distinct configurations plus repeated same-code draws
+that measure rerun variance — best 33.06; the same-code series spans ~6 pp): our shallow-config submission scored **25.00** (semi-private set; a
 slightly *positive* eval→LB gap) and its byte-identical resubmit **24.17** — a first
 thin bound on same-code rerun noise (0.8 pp, n=2 runs) — while the deep-pool config,
 locally +2.4 pp, **regressed to 19.17**, far outside that bound. Two further

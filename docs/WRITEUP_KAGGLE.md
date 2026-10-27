@@ -1,9 +1,9 @@
 # What Actually Moves an Offline ARC-AGI-2 Score — A Measured Study
 
-**Subtitle:** We reproduced the 2025 winner on one consumer GPU, measured every lever practitioners reach for — with sample sizes, paired comparisons, and 79 first-party leaderboard submissions — and found that almost nothing moves the score except time, that local gains reliably *invert* on the hidden set, and that same-code reruns alone span 6pp.
+**Subtitle:** We reproduced the 2025 winner on one consumer GPU, measured every lever practitioners reach for — with sample sizes, paired comparisons, and 79 first-party leaderboard submissions — and found that almost nothing moves the score except time, that local gains reliably *invert* on the hidden set, and that same-code reruns alone span nearly 7pp.
 
 *Track: ARC-AGI-2. Best submission: 33.06 (submission ID 57502566). Full paper (PDF) in project links; all code public (MIT-0; vendored files keep their upstream licenses, see NOTICE).*
-<!-- Re-pick the best after the Nov 2 draw scores; sync PAPER.md line 10 and the draw stats (49 draws as of 2026-10-27). -->
+<!-- Re-pick the best after the Nov 2 draw scores; sync PAPER.md line 10 and the draw stats (61 draws as of 2026-10-27; refresh from docs/lb_draws.csv). -->
 
 ---
 
@@ -41,7 +41,7 @@ Across our configuration submissions, exactly two interventions survived contact
 
 **Time is spent, not wasted.** An instrumented run over all 120 public-eval tasks shows the engine's limits almost never bind: 0 of 667 decode calls hit the 540s cap, 8 of 120 tasks hit the 1,200s per-task cap, and those 8 solve at the same rate as the rest (25.0% vs 26.5%). A shortest-job-first task queue — the only scheduling change in our submitted kernel — is neutral on the leaderboard. The +5-6pp came from using the whole budget; there is no budget left to reallocate.
 
-**Rerun noise is the rest of the public board.** Our linked score, 33.06, is the *maximum* of a series of byte-identical reruns of one attributed public kernel (advertised 33.89; our only change is the queue order). Over the last 49 scored draws: median 29.3, interquartile 28.7-30.1, range 26.8-33.06, four draws ≥31. A kernel's advertised score is the max order statistic of such a series, not its expectation: expect ~4pp below the advertised number, and read the ~33-37 pack on the board as the upper tail of rerun lotteries. We report the whole distribution because the best draw alone would misstate what the method does.
+**Rerun noise is the rest of the public board.** Our linked score, 33.06, is the *maximum* of a series of byte-identical reruns of one attributed public kernel (advertised 33.89; our only change is the queue order). Over 61 such draws (Aug 25 to Oct 26; `docs/lb_draws.csv` lists every submission): median 29.3, interquartile 28.7-30.6, range 26.4-33.06, six draws ≥31, one ≥32. A kernel's advertised score is the max order statistic of such a series, not its expectation: expect ~4pp below the advertised number, and read the ~33-37 pack on the board as the upper tail of rerun lotteries. We report the whole distribution because the best draw alone would misstate what the method does.
 
 ## Training-time interventions: four nulls and a hypothesis
 

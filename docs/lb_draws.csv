@@ -1,0 +1,81 @@
+date,submission_id,status,public_score,description
+2026-06-25 02:18:33,54027281,COMPLETE,25.00,NVARC fork v7: aug_n=8 dfs_prob=0.2 (first submission)
+2026-06-26 00:05:48,54060681,COMPLETE,19.17,NVARC fork v8: deep pool aug_n=16 dfs_prob=0.1 eval_aug=3
+2026-08-09 19:52:30,55388636,COMPLETE,24.17,v9: pure v7-config resubmit (aug_n=8 dfs_prob=0.2) - LB noise measurement
+2026-08-10 00:01:12,55391847,COMPLETE,28.47,"v10: public perfpatch engine (attributed fork of mikelou1/koushikrudra/NVARC) - same model as v7, isolates engine efficiency"
+2026-08-11 00:02:31,55418313,COMPLETE,30.14,"v11: mother baseline (attributed fork of koushikrudra/failed-in-aimo LB33.89; one-line mount-path fix) - reproducibility test, same model as v7/v10"
+2026-08-12 00:00:13,55444089,COMPLETE,27.22,v12: mother baseline rerun #2 (distribution sample; prior draws 28.47/30.14 vs advertised 33.89)
+2026-08-13 00:02:56,55469455,COMPLETE,28.47,v13: mother baseline + our never-[[0]] fallback (identity/mode guesses for unreached tasks; strictly nonnegative patch)
+2026-08-14 00:20:02,55493916,COMPLETE,27.64,draw-max: baseline+fallback (draws 28.47; base distribution 27.22/28.47/30.14) [auto 0814]
+2026-08-15 00:20:03,55516327,COMPLETE,31.81,draw-max: baseline+fallback (draws 28.47; base distribution 27.22/28.47/30.14) [auto 0815]
+2026-08-16 00:20:03,55539190,COMPLETE,30.14,draw-max: baseline+fallback (draws 28.47; base distribution 27.22/28.47/30.14) [auto 0816]
+2026-08-17 00:20:02,55566508,COMPLETE,28.47,draw-max: baseline+fallback (draws 28.47; base distribution 27.22/28.47/30.14) [auto 0817]
+2026-08-18 00:20:02,55588446,COMPLETE,27.64,draw-max: baseline+fallback (draws 28.47; base distribution 27.22/28.47/30.14) [auto 0818]
+2026-08-19 00:20:03,55611010,COMPLETE,31.94,draw-max: baseline+fallback (draws 28.47; base distribution 27.22/28.47/30.14) [auto 0819]
+2026-08-20 00:20:02,55634300,COMPLETE,27.64,v15 ep2-recipe: aug8x2epochs TTFT (equal tokens vs 16x1; +3.6pp local n=138) [auto 0820]
+2026-08-21 00:20:03,55656708,COMPLETE,28.06,v15 ep2-recipe: aug8x2epochs TTFT (equal tokens vs 16x1; +3.6pp local n=138) [auto 0821]
+2026-08-22 00:20:05,55679630,COMPLETE,29.31,v15 ep2-recipe: aug8x2epochs TTFT (equal tokens vs 16x1; +3.6pp local n=138) [auto 0822]
+2026-08-23 00:20:03,55702077,COMPLETE,27.64,v15 ep2-recipe: aug8x2epochs TTFT (equal tokens vs 16x1; +3.6pp local n=138) [auto 0823]
+2026-08-24 00:20:02,55728312,COMPLETE,29.72,draw-max: baseline+fallback v1 (ep2 recipe reverted: 4 LB draws mean 28.2 vs v1 mean 29.2) [auto 0824]
+2026-08-25 00:20:01,55756321,COMPLETE,31.81,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0825]"
+2026-08-26 00:20:02,55781415,COMPLETE,29.72,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0826]"
+2026-08-27 00:20:01,55805853,COMPLETE,28.06,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0827]"
+2026-08-28 14:14:14,55845947,COMPLETE,30.97,draw-max v16 SJF (manual: submitter lost to reboot) [0828]
+2026-08-29 00:20:01,55856019,COMPLETE,28.89,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0829]"
+2026-08-30 00:20:02,55877967,COMPLETE,30.56,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0830]"
+2026-08-31 00:20:02,55902967,COMPLETE,30.56,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0831]"
+2026-09-01 00:20:01,55927442,COMPLETE,27.64,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0901]"
+2026-09-02 00:20:01,55950428,COMPLETE,29.31,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0902]"
+2026-09-03 00:20:02,55970889,COMPLETE,26.39,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0903]"
+2026-09-04 00:20:02,55997510,COMPLETE,30.97,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0904]"
+2026-09-05 00:20:02,56021735,COMPLETE,31.39,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0905]"
+2026-09-06 00:20:02,56043334,COMPLETE,30.14,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0906]"
+2026-09-07 00:20:02,56065455,COMPLETE,29.31,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0907]"
+2026-09-08 00:20:02,56087108,COMPLETE,29.72,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0908]"
+2026-09-09 00:20:02,56109618,COMPLETE,28.89,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0909]"
+2026-09-10 00:20:02,56133445,COMPLETE,30.14,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0910]"
+2026-09-11 00:20:01,56154501,COMPLETE,28.47,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0911]"
+2026-09-12 00:20:02,56174834,COMPLETE,28.75,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0912]"
+2026-09-13 00:20:02,56195393,COMPLETE,28.89,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0913]"
+2026-09-14 00:20:02,56217390,COMPLETE,29.31,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0914]"
+2026-09-16 19:28:38,56286304,COMPLETE,28.89,"draw-max v16 SJF (manual: submitter lost, likely reboot) [0916]"
+2026-09-17 00:20:02,56289789,COMPLETE,30.97,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0917]"
+2026-09-18 00:20:01,56316347,COMPLETE,29.72,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0918]"
+2026-09-19 00:20:01,56343819,COMPLETE,29.72,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0919]"
+2026-09-20 00:20:01,56374543,COMPLETE,28.47,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0920]"
+2026-09-21 00:20:01,56409022,COMPLETE,28.06,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0921]"
+2026-09-22 00:20:02,56446774,COMPLETE,28.06,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0922]"
+2026-09-23 00:20:02,56477348,COMPLETE,29.72,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0923]"
+2026-09-24 00:20:02,56506959,COMPLETE,27.22,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0924]"
+2026-09-25 00:20:02,56535180,COMPLETE,29.31,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0925]"
+2026-09-26 00:20:02,56564301,COMPLETE,30.28,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0926]"
+2026-09-27 00:20:01,56592898,COMPLETE,30.97,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0927]"
+2026-09-28 00:20:02,56623601,COMPLETE,31.39,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0928]"
+2026-09-29 00:20:01,56656827,COMPLETE,30.14,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0929]"
+2026-09-30 00:20:01,56691751,COMPLETE,30.14,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 0930]"
+2026-10-01 00:20:01,56732848,COMPLETE,30.97,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1001]"
+2026-10-02 00:20:02,56761948,COMPLETE,28.89,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1002]"
+2026-10-03 00:20:01,56785261,COMPLETE,28.75,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1003]"
+2026-10-04 00:20:01,56809923,COMPLETE,28.89,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1004]"
+2026-10-05 00:20:01,56837386,COMPLETE,29.31,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1005]"
+2026-10-06 00:20:02,56865275,COMPLETE,26.81,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1006]"
+2026-10-07 00:20:02,56895011,COMPLETE,29.72,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1007]"
+2026-10-09 00:20:01,56980713,COMPLETE,30.97,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1009]"
+2026-10-10 00:20:01,57025193,COMPLETE,28.61,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1010]"
+2026-10-11 00:20:01,57056469,COMPLETE,28.06,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1011]"
+2026-10-12 00:20:01,57089509,COMPLETE,30.14,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1012]"
+2026-10-13 00:20:01,57124090,COMPLETE,29.03,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1013]"
+2026-10-14 00:20:02,57160946,COMPLETE,28.19,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1014]"
+2026-10-15 00:20:02,57199647,COMPLETE,28.47,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1015]"
+2026-10-16 00:20:01,57248611,COMPLETE,28.89,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1016]"
+2026-10-17 00:20:02,57288467,COMPLETE,28.47,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1017]"
+2026-10-18 00:20:01,57331333,COMPLETE,27.22,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1018]"
+2026-10-19 00:20:01,57374437,COMPLETE,30.97,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1019]"
+2026-10-20 00:20:01,57414640,COMPLETE,30.56,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1020]"
+2026-10-21 00:20:01,57458196,COMPLETE,28.89,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1021]"
+2026-10-22 00:20:01,57502566,COMPLETE,33.06,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1022]"
+2026-10-23 00:20:02,57542690,COMPLETE,31.81,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1023]"
+2026-10-24 00:20:01,57576387,COMPLETE,29.31,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1024]"
+2026-10-25 00:20:02,57611240,COMPLETE,31.39,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1025]"
+2026-10-26 00:20:02,57647166,COMPLETE,29.31,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1026]"
+2026-10-27 00:20:01,57683054,PENDING,,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1027]"

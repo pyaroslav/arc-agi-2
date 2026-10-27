@@ -49,7 +49,7 @@ predictions) and a silent tokenizer bug that zeroes the model on modern librarie
 All numbers carry their N and an explicit significance verdict; all code and
 experiments are released. The study is now **leaderboard-confirmed** across
 79 submissions (five distinct configurations plus repeated same-code draws
-that measure rerun variance — best 33.06; the same-code series spans ~6 pp): our shallow-config submission scored **25.00** (semi-private set; a
+that measure rerun variance — best 33.06; the same-code series spans ~7 pp): our shallow-config submission scored **25.00** (semi-private set; a
 slightly *positive* eval→LB gap) and its byte-identical resubmit **24.17** — a first
 thin bound on same-code rerun noise (0.8 pp, n=2 runs) — while the deep-pool config,
 locally +2.4 pp, **regressed to 19.17**, far outside that bound. Two further
@@ -365,7 +365,7 @@ TTT-depth change (8 augmentations × 2 epochs instead of 16 × 1, equal token
 budget) measured **+3.6 pp paired on 138 outputs** (+8/−3 discordant) with a clean
 dose-response behind it. Deployed runtime-neutrally into the public engine, four
 independent leaderboard runs drew {27.64, 28.06, 29.31, 27.64} — mean 28.2 vs the
-unmodified engine's 29.2 over eight draws. **The largest paired local gain we ever
+unmodified engine's 29.3 over ten draws. **The largest paired local gain we ever
 measured transferred as ≈ −1 pp.** Together with the deep-pool inversion (+2.4
 local → −5.8 LB), the pattern is now replicated: *recipe changes tuned on
 public-eval pairs overfit the public distribution*; the semi-private set punished
@@ -373,7 +373,7 @@ both pool-widening and adaptation-deepening. The only interventions that
 transferred in this study were engine/budget efficiency (+5–6 pp) and placeholder
 hygiene (≥ 0 by construction).
 
-**Time is fully spent, not wasted.** An instrumented run of the engine over all 120 public-eval tasks shows its time limits almost never bind: none of 667 decoding calls hit the 540 s cap, 8 of 120 tasks hit the 1,200 s per-task cap (3% of decoding batches skipped), and those 8 tasks solve at the same rate as the rest (25.0% vs 26.5%). Together with a neutral shortest-job-first scheduling test on the leaderboard (+0.6 pp over 3 draws), this closes the time lever: the engine's +5-6 pp came from using the whole budget, and there is no remaining budget to reallocate.
+**Time is fully spent, not wasted.** An instrumented run of the engine over all 120 public-eval tasks shows its time limits almost never bind: none of 667 decoding calls hit the 540 s cap, 8 of 120 tasks hit the 1,200 s per-task cap (3% of decoding batches skipped), and those 8 tasks solve at the same rate as the rest (25.0% vs 26.5%). Together with a neutral shortest-job-first scheduling test on the leaderboard (61 same-code draws, Aug 25 to Oct 26: mean 29.5, sd 1.3, median 29.3, range 26.4-33.06, vs. 29.3 over ten draws of the unmodified engine; every submission is listed in `docs/lb_draws.csv`), this closes the time lever: the engine's +5-6 pp came from using the whole budget, and there is no remaining budget to reallocate.
 
 **Two further submissions complete the picture.** First, resubmitting the shallow
 config *byte-identically* scored 24.17 vs the original 25.00 — one same-code pair

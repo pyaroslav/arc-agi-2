@@ -7,8 +7,9 @@ sample size and an explicit significance verdict.**
 
 *ARC Prize 2026 — ARC-AGI-2 (offline track). Seventy-nine first-party leaderboard
 submissions: fifteen across five configurations, then a long same-code rerun series
-that measures leaderboard noise; see §3, §7 and §9. Best score: 33.06 (submission 57502566).*
-<!-- Re-pick the best submission after the Nov 2 00:20 UTC draw scores; keep in sync with docs/WRITEUP_KAGGLE.md. -->
+that measures leaderboard noise; see §3, §7 and §9. Linked submission: 33.06 (submission
+57502566), the best of the 79 scored through Oct 26, 2026.*
+<!-- Score line is date-anchored (through Oct 26, 2026); the linked ID stays 57502566. Optional post-Nov 2 refresh: re-pull docs/lb_draws.csv, update the draw statistics in §7, re-render PAPER.pdf. Keep in sync with docs/WRITEUP_KAGGLE.md. -->
 
 ---
 
@@ -49,7 +50,7 @@ predictions) and a silent tokenizer bug that zeroes the model on modern librarie
 All numbers carry their N and an explicit significance verdict; all code and
 experiments are released. The study is now **leaderboard-confirmed** across
 79 submissions (five distinct configurations plus repeated same-code draws
-that measure rerun variance — best 33.06; the same-code series spans ~7 pp): our shallow-config submission scored **25.00** (semi-private set; a
+that measure rerun variance — best 33.06 through Oct 26, 2026; the same-code series spans ~7 pp): our shallow-config submission scored **25.00** (semi-private set; a
 slightly *positive* eval→LB gap) and its byte-identical resubmit **24.17** — a first
 thin bound on same-code rerun noise (0.8 pp, n=2 runs) — while the deep-pool config,
 locally +2.4 pp, **regressed to 19.17**, far outside that bound. Two further

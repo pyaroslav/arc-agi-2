@@ -2,8 +2,8 @@
 
 **Subtitle:** We reproduced the 2025 winner on one consumer GPU, measured every lever practitioners reach for — with sample sizes, paired comparisons, and 79 first-party leaderboard submissions — and found that almost nothing moves the score except time, that local gains reliably *invert* on the hidden set, and that same-code reruns alone span nearly 7pp.
 
-*Track: ARC-AGI-2. Best submission: 33.06 (submission ID 57502566). Full paper (PDF) in project links; all code public (MIT-0; vendored files keep their upstream licenses, see NOTICE).*
-<!-- Re-pick the best after the Nov 2 draw scores; sync PAPER.md line 10 and the draw stats (61 draws as of 2026-10-27; refresh from docs/lb_draws.csv). -->
+*Track: ARC-AGI-2. Linked submission: 33.06 (submission ID 57502566), the best of 79 scored first-party submissions through Oct 26, 2026. Full paper (PDF) in project links; all code public (MIT-0; vendored files keep their upstream licenses, see NOTICE).*
+<!-- Score line is date-anchored (through Oct 26, 2026): no edit is needed after later draws. The linked ID stays 57502566 regardless of later scores. Optional post-Nov 2 refresh is repo-only (docs/lb_draws.csv, PAPER.pdf). -->
 
 ---
 

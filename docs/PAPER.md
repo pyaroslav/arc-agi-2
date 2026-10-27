@@ -442,7 +442,7 @@ Layout: `src/nvarc/` (ported pipeline + hardened submission engine), `src/arc/`
 generator), `src/eval/` (metrics), `scripts/` (every experiment), `data/` (gitignored;
 fetched at runtime).
 
-**Licensing & attribution.** Original files are MIT (see `LICENSE`). Vendored/derived
+**Licensing & attribution.** Original files are MIT-0 (see `LICENSE`). Vendored/derived
 files retain upstream licenses and carry attribution headers: `src/nvarc/arc_loader.py`
 and `src/nvarc/selection.py` derive from NVARC (1ytic/NVARC, open-sourced per the ARC
 Prize requirement); `src/induction/common.py` is vendored from BARC (xu3kev/BARC). We

@@ -1,0 +1,20 @@
+NOTICE — third-party code in this repository
+
+Original files in this repository are released under MIT-0 (see LICENSE).
+The files below are vendored or derived from upstream projects and remain
+under their upstream licenses; their attribution headers must be preserved.
+
+  src/nvarc/arc_loader.py
+  src/nvarc/selection.py
+      Derived ~verbatim from the NVARC open-source notebook
+      (github.com/1ytic/NVARC), ARC Prize 2025 winner.
+      Original authors: Ivan Sorokin & Jean-François Puget.
+      Open-sourced per the ARC Prize open-source requirement.
+
+  src/induction/common.py
+      Vendored from BARC (github.com/xu3kev/BARC).
+
+Not redistributed here (fetched at runtime from Kaggle / HuggingFace, all of
+data/ is .gitignored): the sorokin/qwen3_4b_grids15_sft139 checkpoint, the
+NVARC synthetic and augmented datasets, the BARC induction model and BARC-HEAVY
+tasks, and the ARC Prize 2026 Kaggle discussion corpus (cited, not relicensed).

@@ -1,3 +1,5 @@
+# Vendored from BARC (github.com/xu3kev/BARC), file `common.py`; the upstream license
+# applies to this file — see NOTICE. Not covered by this repository's MIT-0 grant.
 """Common library for ARC"""
 
 import numpy as np

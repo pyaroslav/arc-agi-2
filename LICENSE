@@ -1,16 +1,13 @@
-MIT License
+MIT No Attribution (MIT-0)
 
-Copyright (c) 2026 KinetiStack LLC
+Copyright 2026 KinetiStack LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -20,9 +17,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-The MIT license above covers ORIGINAL files in this repository only. Several
-files are vendored or derived from upstream projects and remain under their
-respective upstream licenses (see NOTICE):
+The MIT-0 license above covers ORIGINAL files in this repository only, as
+required for ARC Prize 2026 eligibility (authored code must be released under a
+public-domain-style license such as CC0 or MIT-0). Several files are vendored
+or derived from upstream projects and remain under their respective upstream
+licenses (see NOTICE):
   - src/nvarc/arc_loader.py, src/nvarc/selection.py : derived from NVARC
     (github.com/1ytic/NVARC), per the ARC Prize open-source requirement.
   - src/induction/common.py : vendored from BARC (github.com/xu3kev/BARC).

@@ -22,7 +22,9 @@ while [ "$(date -u +%Y%m%d)" -le "20261102" ]; do
   [ "$(date -u +%Y%m%d)" -le "20261102" ] || break
   [ -f "$CONF" ] || { echo "$(date -u) no config; stopping"; break; }
   today=$(date -u +%Y-%m-%d)
-  last=$(kaggle competitions submissions -c $COMP 2>/dev/null | sed -n 3p | awk '{print $3}')
+  # Match on the row pattern, not a fixed line number: the CLI's "outdated
+  # version" warning goes to stdout and shifts the table down a line.
+  last=$(kaggle competitions submissions -c $COMP 2>/dev/null | awk '$1 ~ /^[0-9]+$/ {print $3; exit}')
   if [ "$last" = "$today" ]; then
     echo "$(date -u) slot already used today ($last); skip"
     continue
@@ -32,6 +34,6 @@ while [ "$(date -u +%Y%m%d)" -le "20261102" ]; do
   kaggle competitions submit -c $COMP -k "$KERNEL" -v "$VERSION" -f submission.json \
     -m "${MSG:-draw-max resubmit} [auto $(date -u +%m%d)]" 2>&1
   sleep 60
-  kaggle competitions submissions -c $COMP 2>/dev/null | sed -n 3p
+  kaggle competitions submissions -c $COMP 2>/dev/null | awk '$1 ~ /^[0-9]+$/ {print; exit}'
 done
 echo "$(date -u) daily submitter finished"

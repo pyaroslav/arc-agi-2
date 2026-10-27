@@ -9,7 +9,7 @@
 
 ## What we did
 
-We did not build a new architecture. We rebuilt the 2025 winning recipe (NVARC: per-task test-time-trained LoRA on a grid-tokenized Qwen3-4B, DFS decoding, augmentation voting) as a dependency-light `transformers`+`peft` pipeline on a single RTX 5090, and used it as an **instrument**: every lever the community reaches for, measured with explicit N, paired where possible, and — the part that changed our conclusions — **validated against the real leaderboard**: fifteen configuration submissions, then a long series of byte-identical reruns that measures the leaderboard's own noise.
+We did not build a new architecture. We rebuilt the 2025 winning recipe (NVARC: per-task test-time-trained LoRA on a grid-tokenized Qwen3-4B, DFS decoding, augmentation voting) as a dependency-light `transformers`+`peft` pipeline on a single RTX 5090, and used it as an **instrument**: every lever the community reaches for, measured with explicit N, paired where possible, and — the part that changed our conclusions — **validated against the real leaderboard**: fifteen submissions across five configurations, then a long series of byte-identical reruns that measures the leaderboard's own noise.
 
 Three results organize everything we saw.
 
@@ -62,4 +62,4 @@ Reconciling our measurements with the board: the public frontier is ~34 advertis
 
 ## Reproducibility
 
-Everything is released: the single-GPU reproduction (with a fix for a silent tokenizer bug in `transformers` ≥5 that scores exactly 0 with no error), every submission configuration and the full draw series, every cache and analysis script behind every number here, the hardened submission engine (dynamic work-queue, no-placeholder policy, atomic-checkpoint trainer with pause/resume), and the full paper with per-claim N and confidence intervals. Repository: github.com/pyaroslav/arc-agi-2 (MIT-0). Attached notebook: our submission kernel. We believe the measured map of dead ends — and especially the two replicated leaderboard inversions — will save other teams months.
+Everything is released: the single-GPU reproduction (with a fix for a silent tokenizer bug in `transformers` ≥5 that scores exactly 0 with no error), every submission configuration and the leaderboard draw series, every cache and analysis script behind every number here, the hardened submission engine (dynamic work-queue, no-placeholder policy, atomic-checkpoint trainer with pause/resume), and the full paper with per-claim N and confidence intervals. Repository: github.com/pyaroslav/arc-agi-2 (MIT-0). Attached notebook: our submission kernel. We believe the measured map of dead ends — and especially the two replicated leaderboard inversions — will save other teams months.

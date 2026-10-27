@@ -6,8 +6,8 @@ reproduction of the 2025 winner, with every claimed effect reported with its
 sample size and an explicit significance verdict.**
 
 *ARC Prize 2026 — ARC-AGI-2 (offline track). Seventy-nine first-party leaderboard
-submissions: fifteen configuration runs plus a same-code rerun series that measures
-leaderboard noise; see §3, §7 and §9. Best score: 33.06 (submission 57502566).*
+submissions: fifteen across five configurations, then a long same-code rerun series
+that measures leaderboard noise; see §3, §7 and §9. Best score: 33.06 (submission 57502566).*
 <!-- Re-pick the best submission after the Nov 2 00:20 UTC draw scores; keep in sync with docs/WRITEUP_KAGGLE.md. -->
 
 ---

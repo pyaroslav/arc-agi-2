@@ -29,7 +29,10 @@ while [ "$(date -u +%Y%m%d)" -le "20261102" ]; do
     echo "$(date -u) slot already used today ($last); skip"
     continue
   fi
-  read -r KERNEL VERSION MSG < "$CONF"
+  # A dated override (outputs/daily_submit_config.YYYYMMDD) wins for that day.
+  DCONF="$CONF.$(date -u +%Y%m%d)"
+  [ -f "$DCONF" ] || DCONF="$CONF"
+  read -r KERNEL VERSION MSG < "$DCONF"
   echo "$(date -u) submitting $KERNEL v$VERSION"
   kaggle competitions submit -c $COMP -k "$KERNEL" -v "$VERSION" -f submission.json \
     -m "${MSG:-draw-max resubmit} [auto $(date -u +%m%d)]" 2>&1

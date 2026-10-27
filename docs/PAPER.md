@@ -55,7 +55,8 @@ slightly *positive* eval→LB gap) and its byte-identical resubmit **24.17** —
 thin bound on same-code rerun noise (0.8 pp, n=2 runs) — while the deep-pool config,
 locally +2.4 pp, **regressed to 19.17**, far outside that bound. Two further
 submissions run the *same model checkpoint* through the community's public optimized
-engine and score **28.47 and 30.14**: **+5 to +6 pp bought purely by engine
+engine and score **28.47 and 30.14**, and that engine's 71 later leaderboard draws
+centre on 29.3 (§7): **+4 to +5 pp bought purely by engine
 throughput** that converts the 12 h budget into per-task compute — the largest
 single effect in this study — while both fall ~4-5 pp short of that engine's
 advertised leaderboard score (§7). The two config points *straddle* the family
@@ -371,10 +372,10 @@ measured transferred as ≈ −1 pp.** Together with the deep-pool inversion (+2
 local → −5.8 LB), the pattern is now replicated: *recipe changes tuned on
 public-eval pairs overfit the public distribution*; the semi-private set punished
 both pool-widening and adaptation-deepening. The only interventions that
-transferred in this study were engine/budget efficiency (+5–6 pp) and placeholder
+transferred in this study were engine/budget efficiency (+4–5 pp) and placeholder
 hygiene (≥ 0 by construction).
 
-**Time is fully spent, not wasted.** An instrumented run of the engine over all 120 public-eval tasks shows its time limits almost never bind: none of 667 decoding calls hit the 540 s cap, 8 of 120 tasks hit the 1,200 s per-task cap (3% of decoding batches skipped), and those 8 tasks solve at the same rate as the rest (25.0% vs 26.5%). Together with a neutral shortest-job-first scheduling test on the leaderboard (61 same-code draws, Aug 25 to Oct 26: mean 29.5, sd 1.3, median 29.3, range 26.4-33.06, vs. 29.3 over ten draws of the unmodified engine; every submission is listed in `docs/lb_draws.csv`), this closes the time lever: the engine's +5-6 pp came from using the whole budget, and there is no remaining budget to reallocate.
+**Time is fully spent, not wasted.** An instrumented run of the engine over all 120 public-eval tasks shows its time limits almost never bind: none of 667 decoding calls hit the 540 s cap, 8 of 120 tasks hit the 1,200 s per-task cap (3% of decoding batches skipped), and those 8 tasks solve at the same rate as the rest (25.0% vs 26.5%). Together with a neutral shortest-job-first scheduling test on the leaderboard (61 same-code draws, Aug 25 to Oct 26: mean 29.5, sd 1.3, median 29.3, range 26.4-33.06, vs. 29.3 over ten draws of the unmodified engine; every submission is listed in `docs/lb_draws.csv`), this closes the time lever: the engine's +4-5 pp came from using the whole budget, and there is no remaining budget to reallocate.
 
 **Two further submissions complete the picture.** First, resubmitting the shallow
 config *byte-identically* scored 24.17 vs the original 25.00 — one same-code pair
@@ -395,7 +396,7 @@ budget-sensitive family, a caution that applies equally to the ~34-pp "pack" of
 leaderboard entries riding these kernels. Our full first-party ladder — 24.17/25.00
 (stock `transformers`, one third of the budget used) → 28.47/30.14 (community
 unsloth engine, full budget, same model checkpoint) — measures the engine/budget
-lever at **+5 to +6 pp**, the largest single effect in this study.
+lever at **+4 to +5 pp**, the largest single effect in this study.
 
 **Table 2 — configs.** shallow: aug_n 8, DFS prob 0.2, 2 views, ~130 s/task —
 **LB 25.00**. deep: aug_n 16, DFS prob 0.1, 3 views, ~261 s/task — **LB 19.17**.
@@ -461,9 +462,9 @@ relicensed.
   gives one first-party estimate of same-code rerun noise (0.8 pp, n=2) alongside
   competitors' reported ±2 pp; the *sign* of the 5.8 pp deep-config regression is
   robust to either figure, its magnitude less so. The engine-efficiency estimate
-  (+5 to +6 pp) rests on two runs of the community engine (28.47, 30.14) against
-  two of ours (24.17, 25.00) — consistent, but still a thin sample of a
-  budget-sensitive process. Grand-Prize eligibility (a linked Kaggle submission) is
+  (+4 to +5 pp) rests on two runs of ours (24.17, 25.00) against the community
+  engine's 71 leaderboard draws (median 29.3, mean 29.5; §7): the engine side is
+  well sampled, our side is not. Grand-Prize eligibility (a linked Kaggle submission) is
   satisfied.
 - **Small samples.** Most A/Bs are n=20–78; as Table 1 states, sub-~10 pp effects are
   within CI. The robust claims are the *true zeros* (DSL 0/167, induction 0/166 eval)

@@ -448,11 +448,11 @@ Layout: `src/nvarc/` (ported pipeline + hardened submission engine), `src/arc/`
 generator), `src/eval/` (metrics), `scripts/` (every experiment), `data/` (gitignored;
 fetched at runtime).
 
-**Submitted kernel.** Every v16 draw of §7, including the linked 57502566, ran version 4
+**Submitted kernel.** The linked 57502566 and the pinned daily series of §7 ran version 4
 of the Kaggle notebook `arc-agi2-baseline-fallback`; its exact source and metadata are in
 `kaggle_kernels/baseline-fallback/`. Relative to the attributed public engine it contains
 mount-path fixes, the shortest-job-first task queue in `starter.py` (tasks sorted by
-grid-cell count instead of alphabetically), our never-[[0]] fallback cell (§6.2), and the
+grid-cell count instead of alphabetically), our never-[[0]] fallback cell (§5), and the
 scaffolding of a verified-induction pre-pass ("Leg C") that exits as a no-op in this
 configuration because no coder model is attached (the notebook attaches only the 4B
 checkpoint), so the merge step is skipped and the base pipeline runs as in the public

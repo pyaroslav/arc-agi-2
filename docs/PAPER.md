@@ -279,8 +279,11 @@ close it. Two costs keep this off the leaderboard. A single pass over the 240 hi
 tasks already uses ~10.7 of the 12 h, so a second independent pass means halving each
 one. And a pool-widening change has inverted on the leaderboard once already (deep
 pool: +2.4 pp local → −5.8 pp LB). We report pooling as the clearest remaining
-headroom, and selection over deep pools as the open problem it exposes. We did not
-submit it.
+headroom, and selection over deep pools as the open problem it exposes. As of
+Oct 27, 2026 we had not submitted it ourselves; three leaderboard draws of a public
+cross-run-pooling kernel on the same model (an attributed fork, unmodified apart
+from our placeholder cell) were scheduled for Oct 28–30 and are recorded in
+`docs/lb_draws.csv`.
 
 ---
 

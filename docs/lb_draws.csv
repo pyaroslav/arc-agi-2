@@ -80,4 +80,5 @@ date,submission_id,status,public_score,description
 2026-10-26 00:20:02,57647166,COMPLETE,29.31,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1026]"
 2026-10-27 00:20:01,57683054,COMPLETE,29.31,"v16 SJF-queue: shortest-job-first task scheduling, recipe untouched (v1 aug16x1) [auto 1027]"
 2026-10-28 00:20:01,57717485,COMPLETE,30.69,"triple-pass fork (woguoat, cross-run pooling) + never-[[0]] fallback [auto 1028]"
-2026-10-29 00:20:01,57752994,PENDING,,"triple-pass fork (woguoat, cross-run pooling) + never-[[0]] fallback [auto 1029]"
+2026-10-29 00:20:01,57752994,COMPLETE,29.03,"triple-pass fork (woguoat, cross-run pooling) + never-[[0]] fallback [auto 1029]"
+2026-10-30 00:20:02,57786747,PENDING,,"triple-pass fork (woguoat, cross-run pooling) + never-[[0]] fallback [auto 1030]"

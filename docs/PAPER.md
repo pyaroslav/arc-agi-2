@@ -285,7 +285,7 @@ headroom, and selection over deep pools as the open problem it exposes. As of
 Oct 27, 2026 we had not submitted it ourselves; three leaderboard draws of a public
 cross-run-pooling kernel on the same model (an attributed fork, unmodified apart
 from our placeholder cell) ran Oct 28–30 and are recorded in `docs/lb_draws.csv`:
-30.69, 29.03 and 29.86 (mean 29.86 against the 29.3 same-code median, sd 1.3), inside
+30.69, 29.03 and 29.86 (mean 29.86; the same-code series has median 29.3, sd 1.3), inside
 that series' spread. A public three-pass pooling kernel on the same model therefore
 scored no better than our single-pass series, consistent with selection rather than
 coverage being the binding constraint; the kernel's own single-pass baseline was not

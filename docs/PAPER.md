@@ -38,7 +38,9 @@ discordant outputs (exact McNemar p = 1.0) — and *inverted* on the real leader
 add coverage on the hard eval distribution, and parameter scale without a deeper
 training corpus subtracts. The one exception is pooling *independent* runs, which
 lifts the oracle from 35.5% to 48.6% over three runs (n=138), while pass@2 rises only
-to 36.2%. Once the pool is that deep, selection becomes the bottleneck (§5).
+to 36.2%. Once the pool is that deep, selection becomes the bottleneck (§5). On the
+leaderboard, three draws of a public three-pass pooling kernel on the same model scored
+no better than single-pass reruns (§5).
 **Second**, a
 *generalization-gap calibration* across approach families, drawn from the competition
 forum: the LLM+test-time-training family loses ~3.5 pp absolute (~11% relative) from
@@ -282,8 +284,12 @@ pool: +2.4 pp local → −5.8 pp LB). We report pooling as the clearest remaini
 headroom, and selection over deep pools as the open problem it exposes. As of
 Oct 27, 2026 we had not submitted it ourselves; three leaderboard draws of a public
 cross-run-pooling kernel on the same model (an attributed fork, unmodified apart
-from our placeholder cell) were scheduled for Oct 28–30 and are recorded in
-`docs/lb_draws.csv`.
+from our placeholder cell) ran Oct 28–30 and are recorded in `docs/lb_draws.csv`:
+30.69, 29.03 and 29.86 (mean 29.86 against the 29.3 same-code median, sd 1.3), inside
+that series' spread. A public three-pass pooling kernel on the same model therefore
+scored no better than our single-pass series, consistent with selection rather than
+coverage being the binding constraint; the kernel's own single-pass baseline was not
+measured, so this bounds the leaderboard transfer, not the local coverage gain.
 
 ---
 
@@ -456,7 +462,7 @@ grid-cell count instead of alphabetically), our never-[[0]] fallback cell (§6.2
 scaffolding of a verified-induction pre-pass ("Leg C") that exits as a no-op in this
 configuration because no coder model is attached (the notebook attaches only the 4B
 checkpoint), so the merge step is skipped and the base pipeline runs as in the public
-kernel apart from the queue order. The cross-run-pooling fork scheduled for Oct 28–30
+kernel apart from the queue order. The cross-run-pooling fork that ran Oct 28–30
 is in `kaggle_kernels/triple-pass-fork/`.
 
 **Licensing & attribution.** Original files are MIT-0 (see `LICENSE`). Vendored/derived
